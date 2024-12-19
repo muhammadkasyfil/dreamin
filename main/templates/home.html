@@ -88,10 +88,10 @@
                 <div class="overflow-x-auto">
                     <div class="flex space-x-4 pb-4">
                         {% for dream in user_dreams %}
-                        <div class="flex-shrink-0 w-64 bg-white/20 rounded-lg p-4">
+                        <a href="{% url 'dream_playback' dream.id %}" class="flex-shrink-0 w-64 bg-white/20 rounded-lg p-4">
                             <h3 class="text-white font-semibold">{{ dream.title }}</h3>
                             <p class="text-white/80 text-sm">{{ dream.created_at|date:"M d, Y" }}</p>
-                        </div>
+                        </a>
                         {% endfor %}
                     </div>
                 </div>

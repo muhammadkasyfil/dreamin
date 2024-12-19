@@ -25,40 +25,127 @@
             },
         }
     </script>
+    <style>
+        input[type="range"] {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            background: #FFD9E8;
+        }
+    </style>
 </head>
 <body class="min-h-screen bg-warmcream font-inter">
     <header class="bg-slateblueSoft py-4 px-6 shadow-lg">
         <div class="container mx-auto flex justify-between items-center">
-            <a href="" class="flex items-center space-x-2">
+            <a href="{% url 'home' %}" class="flex items-center space-x-2">
                 <div class="w-8 h-8 bg-warmcream rounded-full flex items-center justify-center">
                     <div class="w-6 h-6 bg-periwinkle rounded-full transform -translate-x-1"></div>
                 </div>
                 <span class="text-2xl font-bold text-warmcream font-poppins">Dreamin</span>
             </a>
-            <button class="bg-softpink hover:bg-softpink/80 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
-                Logout
-            </button>
+            <div class="flex space-x-4">
+                <a href="{% url 'create_reflection' dream.id %}" 
+                   class="bg-periwinkle hover:bg-periwinkle/80 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                    Write Journal
+                </a>
+                <a href="{% url 'logout' %}" 
+                   class="bg-softpink hover:bg-softpink/80 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                    Logout
+                </a>
+            </div>
         </div>
     </header>
 
     <main class="container mx-auto px-4 py-8">
         <div class="max-w-3xl mx-auto bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
-            <div class="bg-white/20 border border-white/30 rounded-lg p-4 mb-4 h-96">
-                <div class="w-full h-full flex items-center justify-center text-white text-2xl font-semibold">
-                    Dream Playback Area
+            <div class="bg-white/20 border border-white/30 rounded-lg p-4 mb-4 aspect-video">
+                <video id="dreamVideo" class="w-full h-full rounded" loop>
+                    <source src="{{ animation.file.url }}" type="video/mp4">
+                </video>
+            </div>
+            
+            <div class="space-y-6">
+                <div class="w-full">
+                    <input type="range" id="timeline" class="w-full" value="0" min="0" max="100">
                 </div>
-            </div>
-            
-            <div class="flex justify-center space-x-4 mb-4">
-                <button class="bg-periwinkle hover:bg-periwinkle/80 text-white font-semibold py-2 px-6 rounded-lg transition-colors">Play</button>
-                <button class="bg-periwinkle hover:bg-periwinkle/80 text-white font-semibold py-2 px-6 rounded-lg transition-colors">Pause</button>
-            </div>
-            
-            <div class="w-full bg-white/20 rounded-full h-2 mb-4">
-                <div class="bg-softpink h-2 rounded-full" style="width: 45%"></div>
+                
+                <div class="flex justify-center space-x-4">
+                    <button onclick="togglePlay()" id="playButton" 
+                            class="bg-periwinkle hover:bg-periwinkle/80 text-white font-semibold py-2 px-6 rounded-lg transition-colors">
+                        Play
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="bg-white/20 p-4 rounded-lg">
+                        <label class="block text-white text-sm mb-2">Animation Volume</label>
+                        <input type="range" id="videoVolume" class="w-full" value="100" min="0" max="100"
+                               oninput="updateVolume('dreamVideo', this.value)">
+                    </div>
+                    
+                    <div class="bg-white/20 p-4 rounded-lg">
+                        <label class="block text-white text-sm mb-2">Sound Volume</label>
+                        <input type="range" id="soundVolume" class="w-full" value="100" min="0" max="100"
+                               oninput="updateVolume('dreamSound', this.value)">
+                        <audio id="dreamSound" loop>
+                            <source src="{{ sound.file.url }}" type="audio/mpeg">
+                        </audio>
+                    </div>
+                    
+                    <div class="bg-white/20 p-4 rounded-lg">
+                        <label class="block text-white text-sm mb-2">Dialogue Volume</label>
+                        <input type="range" id="dialogueVolume" class="w-full" value="100" min="0" max="100"
+                               oninput="updateVolume('dreamDialogue', this.value)">
+                        <audio id="dreamDialogue" loop>
+                            <source src="{{ dialogue.file.url }}" type="audio/mpeg">
+                        </audio>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
+
+    <script>
+        const video = document.getElementById('dreamVideo');
+        const sound = document.getElementById('dreamSound');
+        const dialogue = document.getElementById('dreamDialogue');
+        const timeline = document.getElementById('timeline');
+        const playButton = document.getElementById('playButton');
+        let isPlaying = false;
+
+        function togglePlay() {
+            if (isPlaying) {
+                video.pause();
+                sound.pause();
+                dialogue.pause();
+                playButton.textContent = 'Play';
+            } else {
+                video.play();
+                sound.play();
+                dialogue.play();
+                playButton.textContent = 'Pause';
+            }
+            isPlaying = !isPlaying;
+        }
+
+        function updateVolume(elementId, value) {
+            document.getElementById(elementId).volume = value / 100;
+        }
+
+        video.addEventListener('timeupdate', () => {
+            const percentage = (video.currentTime / video.duration) * 100;
+            timeline.value = percentage;
+        });
+
+        timeline.addEventListener('input', () => {
+            const time = (timeline.value / 100) * video.duration;
+            video.currentTime = time;
+            sound.currentTime = time;
+            dialogue.currentTime = time;
+        });
+    </script>
 
     <footer class="bg-slateblueSoft py-4 px-6 mt-8">
         <div class="container mx-auto text-center text-warmcream">

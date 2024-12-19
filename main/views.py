@@ -5,6 +5,7 @@ from django.contrib import messages
 from django import forms
 from django.contrib.auth.decorators import login_required
 from .models import Dream, DreamAnimation, DreamSound, Dialogue, Reflection
+from django.contrib.auth.views import LogoutView
 
 # Landing Page View
 def index(request):
@@ -150,18 +151,21 @@ def create_dream_view(request):
 
 @login_required
 def create_reflection(request, dream_id):
+    dream = Dream.objects.get(id=dream_id, user=request.user)
     if request.method == 'POST':
-        dream = Dream.objects.get(id=dream_id)
         reflection = Reflection.objects.create(
             user=request.user,
             dream=dream,
             content=request.POST.get('reflection')
         )
+        messages.success(request, 'Reflection added successfully!')
         return redirect('dream_detail', dream_id=dream.id)
     
-    return render(request, 'dreamjournal.html', {
-        'dream': Dream.objects.get(id=dream_id)
-    })
+    context = {
+        'dream': dream,
+        'reflections': Reflection.objects.filter(dream=dream)
+    }
+    return render(request, 'dreamjournal.html', context)
 
 @login_required
 def dreamjournal_view(request):
@@ -172,8 +176,15 @@ def dreamjournal_view(request):
     return render(request, 'dreamjournal.html', context)
 
 @login_required
-def dreamplayback_view(request):
-    return render(request, 'dreamplayback.html')
+def dreamplayback_view(request, dream_id):
+    dream = Dream.objects.get(id=dream_id, user=request.user)
+    context = {
+        'dream': dream,
+        'animation': dream.animations.first(),
+        'sound': dream.sounds.first(),
+        'dialogue': dream.dialogues.first(),
+    }
+    return render(request, 'dreamplayback.html', context)
 
 @login_required
 def dream_detail(request, dream_id):

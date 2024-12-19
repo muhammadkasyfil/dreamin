@@ -29,40 +29,61 @@
 <body class="min-h-screen bg-warmcream font-inter">
     <header class="bg-slateblueSoft py-4 px-6 shadow-lg">
         <div class="container mx-auto flex justify-between items-center">
-            <a href="" class="flex items-center space-x-2">
+            <a href="{% url 'home' %}" class="flex items-center space-x-2">
                 <div class="w-8 h-8 bg-warmcream rounded-full flex items-center justify-center">
                     <div class="w-6 h-6 bg-periwinkle rounded-full transform -translate-x-1"></div>
                 </div>
                 <span class="text-2xl font-bold text-warmcream font-poppins">Dreamin</span>
             </a>
-            <button class="bg-softpink hover:bg-softpink/80 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+            <a href="{% url 'logout' %}" class="bg-softpink hover:bg-softpink/80 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
                 Logout
-            </button>
+            </a>
         </div>
     </header>
 
     <main class="container mx-auto px-4 py-8">
-        <div class="max-w-3xl mx-auto space-y-8">
-            <div class="bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
-                <h2 class="text-2xl font-bold text-white mb-4 font-poppins">Dream Summary</h2>
-                <div class="bg-white/20 border border-white/30 rounded-lg p-4">
-                    <h3 class="text-xl font-semibold text-white mb-2">Dream Title</h3>
-                    <p class="text-white/90">A brief summary of the dream the user experienced. This could include key elements, emotions, or notable events from the dream sequence.</p>
+        <!-- Dream Details Section -->
+        <div class="max-w-3xl mx-auto mb-8 bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
+            <h1 class="text-3xl font-bold text-white mb-4 font-poppins">{{ dream.title }}</h1>
+            <p class="text-white/80 mb-2">Created on: {{ dream.created_at|date:"F d, Y" }}</p>
+            <p class="text-white mb-4">{{ dream.description }}</p>
+            
+            <!-- Components Used -->
+            <div class="grid grid-cols-3 gap-4 mb-4">
+                <div class="bg-white/20 p-3 rounded-lg">
+                    <h3 class="text-white font-semibold mb-1">Animation</h3>
+                    <p class="text-white/80">{{ dream.animations.first.name }}</p>
+                </div>
+                <div class="bg-white/20 p-3 rounded-lg">
+                    <h3 class="text-white font-semibold mb-1">Sound</h3>
+                    <p class="text-white/80">{{ dream.sounds.first.name }}</p>
+                </div>
+                <div class="bg-white/20 p-3 rounded-lg">
+                    <h3 class="text-white font-semibold mb-1">Dialogue</h3>
+                    <p class="text-white/80">{{ dream.dialogues.first.name }}</p>
                 </div>
             </div>
-            
-            <div class="bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
-                <h2 class="text-2xl font-bold text-white mb-4 font-poppins">Reflect on Your Dream</h2>
-                <form>
-                    <div class="mb-4">
-                        <label for="reflection" class="block text-white font-semibold mb-2">How did this dream make you feel?</label>
-                        <textarea id="reflection" name="reflection" rows="6" class="w-full bg-white/20 border border-white/30 text-white placeholder-white/70 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-softpink" placeholder="Write your reflection here..."></textarea>
-                    </div>
-                    <button type="submit" class="w-full bg-softpink hover:bg-softpink/80 text-white font-semibold py-3 px-4 rounded-lg transition-colors">
-                        Submit Reflection
-                    </button>
-                </form>
-            </div>
+        </div>
+
+        <!-- Reflection Form -->
+        <div class="max-w-3xl mx-auto bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
+            <h2 class="text-2xl font-bold text-white mb-4 font-poppins">Write Your Reflection</h2>
+            <form method="POST" action="{% url 'create_reflection' dream.id %}">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label for="reflection" class="block text-white font-semibold mb-2">How did this dream make you feel?</label>
+                    <textarea 
+                        id="reflection" 
+                        name="reflection" 
+                        rows="6" 
+                        class="w-full bg-white/20 border border-white/30 text-white placeholder-white/70 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-softpink" 
+                        placeholder="Write your reflection here..."
+                        required></textarea>
+                </div>
+                <button type="submit" class="w-full bg-softpink hover:bg-softpink/80 text-white font-semibold py-3 px-4 rounded-lg transition-colors">
+                    Submit Reflection
+                </button>
+            </form>
         </div>
     </main>
 

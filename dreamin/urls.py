@@ -20,17 +20,19 @@ from django.contrib import admin
 from django.urls import path, include
 from main import views
 from django.contrib.auth import views as auth_views
+from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
     path('login/', views.login_view, name='login'),
     path('signup/', views.signup, name='signup'),
-    path('logout/', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
+    path('logout/', LogoutView.as_view(next_page='index'), name='logout'),
     path("home/", views.home_view, name="home"),
     path("create-dream/", views.create_dream_view, name="create_dream"),
     path("dreamjournal/", views.dreamjournal_view, name="dreamjournal"),
     path("dreamplayback/", views.dreamplayback_view, name="dreamplayback"),
     path("dreamjournal/<int:dream_id>/reflection/", views.create_reflection, name="create_reflection"),
     path("dreamjournal/<int:dream_id>/", views.dream_detail, name="dream_detail"),
+    path('dream-playback/<int:dream_id>/', views.dreamplayback_view, name='dream_playback'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
