@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,7 @@ SECRET_KEY = 'django-insecure-!^tv!3q3k-*3)=9i7o)%r%^a&cbqsqd0(mal)%1nbm0ycwl=b0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
 
 # Application definition
@@ -80,7 +81,7 @@ DATABASES = {
         'NAME': 'database',
         'USER': 'user',
         'PASSWORD': 'password',
-        'HOST': 'postgres',  # This matches the service name in docker-compose.yml
+        'HOST': 'postgres',  # Change this to match service name in docker-compose
         'PORT': '5432',
     }
 }
@@ -131,4 +132,13 @@ LOGIN_REDIRECT_URL = '/home/'
 LOGOUT_REDIRECT_URL = '/login/'
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
+# Media files (uploads)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Create subdirectories for different file types
+ANIMATION_ROOT = os.path.join(MEDIA_ROOT, 'animations')
+SOUND_ROOT = os.path.join(MEDIA_ROOT, 'sounds')
+DIALOGUE_ROOT = os.path.join(MEDIA_ROOT, 'dialogues')
 

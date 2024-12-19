@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django import forms
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -11,7 +12,7 @@ class Profile(models.Model):
 
 class DreamAnimation(models.Model):
     name = models.CharField(max_length=100)
-    file_path = models.CharField(max_length=255)
+    file = models.FileField(upload_to='animations/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -19,7 +20,7 @@ class DreamAnimation(models.Model):
 
 class DreamSound(models.Model):
     name = models.CharField(max_length=100)
-    file_path = models.CharField(max_length=255)
+    file = models.FileField(upload_to='sounds/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -27,7 +28,7 @@ class DreamSound(models.Model):
 
 class Dialogue(models.Model):
     name = models.CharField(max_length=100)
-    sound_file = models.CharField(max_length=255)
+    file = models.FileField(upload_to='dialogues/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -50,16 +51,8 @@ class Dream(models.Model):
         return f"{self.title} by {self.user.username if self.user else 'unknown'}"
 
 class Reflection(models.Model):
-    user = models.ForeignKey(
-        User, 
-        on_delete=models.CASCADE, 
-        related_name='reflections'
-    )
-    dream = models.ForeignKey(
-        Dream, 
-        on_delete=models.CASCADE, 
-        related_name='reflections'
-    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    dream = models.ForeignKey(Dream, on_delete=models.CASCADE, related_name='reflections')
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -67,10 +60,24 @@ class Reflection(models.Model):
         return f"Reflection on {self.dream.title} by {self.user.username}"
 
 class DreamSession(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sessions')
-    start_time = models.DateTimeField(auto_now_add=True)
-    end_time = models.DateTimeField(null=True, blank=True)
-    notes = models.TextField(blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    dream = models.ForeignKey(Dream, on_delete=models.CASCADE, null=True, blank=True)
+    started_at = models.DateTimeField(auto_now_add=True)
+    ended_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return f"Session by {self.user.username} at {self.start_time}"
+        return f"Session for {self.dream.title if self.dream else 'Unknown Dream'}"
+
+class SignupForm(forms.Form):
+    username = forms.CharField(max_length=150)
+    email = forms.EmailField()
+    password1 = forms.CharField(widget=forms.PasswordInput)
+    password2 = forms.CharField(widget=forms.PasswordInput)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password1 = cleaned_data.get('password1')
+        password2 = cleaned_data.get('password2')
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError("Passwords don't match")
+        return cleaned_data

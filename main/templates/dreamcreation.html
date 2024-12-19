@@ -35,16 +35,17 @@
                 </div>
                 <span class="text-2xl font-bold text-warmcream font-poppins">Dreamin</span>
             </a>
-            <button class="bg-softpink hover:bg-softpink/80 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+            <a href="{% url 'logout' %}" class="bg-softpink hover:bg-softpink/80 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
                 Logout
-            </button>
+            </a>
         </div>
     </header>
 
     <main class="container mx-auto px-4 py-8">
         <h1 class="text-3xl font-bold text-center text-slateblueSoft mb-8 font-poppins">Create Your Dream</h1>
         
-        <form class="max-w-2xl mx-auto bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
+        <form method="POST" action="{% url 'create_dream' %}" class="max-w-2xl mx-auto bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
+            {% csrf_token %}
             <div class="mb-4">
                 <label for="title" class="block text-white font-semibold mb-2">Title:</label>
                 <input type="text" id="title" name="title" class="w-full bg-white/20 border border-white/30 text-white placeholder-white/70 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-softpink">

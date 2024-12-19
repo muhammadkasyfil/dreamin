@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dreamin Dashboard</title>
+    <title>Dreamin - Home</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
     <script>
@@ -27,19 +27,26 @@
     </script>
 </head>
 <body class="min-h-screen bg-warmcream font-inter">
-    <!-- Header -->
     <header class="bg-slateblueSoft py-4 px-6 shadow-lg">
         <div class="container mx-auto flex justify-between items-center">
-            <a href="" class="flex items-center space-x-2">
+            <a href="{% url 'home' %}" class="flex items-center space-x-2">
                 <div class="w-8 h-8 bg-warmcream rounded-full flex items-center justify-center">
                     <div class="w-6 h-6 bg-periwinkle rounded-full transform -translate-x-1"></div>
                 </div>
                 <span class="text-2xl font-bold text-warmcream font-poppins">Dreamin</span>
             </a>
+            <div class="flex items-center space-x-4">
+                <form class="relative" action="{% url 'home' %}" method="GET">
+                    <input type="text" name="search" placeholder="Search dreams..." 
+                           class="bg-white/20 border border-white/30 text-white placeholder-white/70 rounded-lg py-2 px-4">
+                </form>
+                <a href="{% url 'logout' %}" class="bg-softpink hover:bg-softpink/80 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                    Logout
+                </a>
+            </div>
         </div>
     </header>
 
-    <!-- Main Content -->
     <div class="container mx-auto px-4 py-8 flex gap-8">
         <!-- Sidebar -->
         <div class="w-80 flex-shrink-0">
@@ -48,123 +55,90 @@
                 <h2 class="text-2xl font-poppins text-white mb-6">Profile</h2>
                 <div class="space-y-4 text-center">
                     <h3 class="text-xl text-white">Hello,</h3>
-                    <p class="text-2xl font-semibold text-white">Username</p>
-                    <p class="text-white/80">Email: Username@gmail.com</p>
-                    <button class="w-full bg-softpink hover:bg-softpink/80 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
-                        Logout
-                    </button>
+                    <p class="text-2xl font-semibold text-white">{{ user.username }}</p>
+                    <p class="text-white/80">{{ user.email }}</p>
                 </div>
             </div>
 
-            <!-- Recent Dreams -->
+            <!-- Latest Dream -->
+            {% if latest_dream %}
             <div class="bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
-                <h2 class="text-2xl font-poppins text-white mb-6">Recent Dreams</h2>
-                <div class="space-y-4">
-                    <div class="bg-white/20 rounded-lg p-4 hover:bg-white/30 transition-colors cursor-pointer">
-                        <p class="text-white">Dream Example 1</p>
-                    </div>
+                <h2 class="text-2xl font-poppins text-white mb-6">Latest Dream</h2>
+                <div class="bg-white/20 rounded-lg p-4">
+                    <h3 class="text-white font-semibold">{{ latest_dream.title }}</h3>
+                    <p class="text-white/80 text-sm">{{ latest_dream.created_at|date:"M d, Y" }}</p>
                 </div>
             </div>
+            {% endif %}
         </div>
 
-        <!-- Main Area -->
+        <!-- Main Content -->
         <div class="flex-1 space-y-8">
-            <!-- Libraries Section -->
+            <!-- Dream Library -->
             <div class="bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
-                <h2 class="text-2xl font-poppins text-white mb-6">Libraries</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div class="bg-white/20 rounded-lg p-4 hover:bg-white/30 transition-colors cursor-pointer">
-                        <div class="aspect-video bg-gray-200 rounded-lg mb-2"></div>
-                        <p class="text-white">Dream Example 1</p>
-                    </div>
-                    <div class="bg-white/20 rounded-lg p-4 hover:bg-white/30 transition-colors cursor-pointer">
-                        <div class="aspect-video bg-gray-200 rounded-lg mb-2"></div>
-                        <p class="text-white">Dream Example 2</p>
-                    </div>
-                    <div class="bg-white/20 rounded-lg p-4 hover:bg-white/30 transition-colors cursor-pointer">
-                        <div class="aspect-video bg-gray-200 rounded-lg mb-2"></div>
-                        <p class="text-white">Dream Example 3</p>
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-poppins text-white">Dream Library</h2>
+                    <a href="{% url 'create_dream' %}" class="bg-periwinkle hover:bg-periwinkle/80 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                        Create Dream
+                    </a>
+                </div>
+                <div class="overflow-x-auto">
+                    <div class="flex space-x-4 pb-4">
+                        {% for dream in user_dreams %}
+                        <div class="flex-shrink-0 w-64 bg-white/20 rounded-lg p-4">
+                            <h3 class="text-white font-semibold">{{ dream.title }}</h3>
+                            <p class="text-white/80 text-sm">{{ dream.created_at|date:"M d, Y" }}</p>
+                        </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
 
-            <!-- Components Section -->
-            <div class="bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
-                <h2 class="text-2xl font-poppins text-white mb-6">Components</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <!-- Animations -->
+            <!-- Components Sections -->
+            <div class="grid grid-cols-3 gap-6">
+                <!-- Animations -->
+                <div class="bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
+                    <h2 class="text-2xl font-poppins text-white mb-6">Animations</h2>
                     <div class="space-y-4">
-                        <div class="bg-white/20 rounded-lg p-4 hover:bg-white/30 transition-colors cursor-pointer">
-                            <div class="aspect-video bg-gray-200 rounded-lg mb-2"></div>
-                            <p class="text-white">Animation 1</p>
+                        {% for animation in random_animations %}
+                        <div class="bg-white/20 rounded-lg p-4">
+                            <p class="text-white">{{ animation.name }}</p>
                         </div>
-                        <div class="bg-white/20 rounded-lg p-4 hover:bg-white/30 transition-colors cursor-pointer">
-                            <div class="aspect-video bg-gray-200 rounded-lg mb-2"></div>
-                            <p class="text-white">Animation 2</p>
-                        </div>
-                        <div class="bg-white/20 rounded-lg p-4 hover:bg-white/30 transition-colors cursor-pointer">
-                            <div class="aspect-video bg-gray-200 rounded-lg mb-2"></div>
-                            <p class="text-white">Animation 3</p>
-                        </div>
+                        {% endfor %}
                     </div>
+                </div>
 
-                    <!-- Sounds -->
+                <!-- Sounds -->
+                <div class="bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
+                    <h2 class="text-2xl font-poppins text-white mb-6">Sounds</h2>
                     <div class="space-y-4">
-                        <div class="bg-white/20 rounded-lg p-4 hover:bg-white/30 transition-colors cursor-pointer">
-                            <div class="aspect-video bg-gray-200 rounded-lg mb-2"></div>
-                            <p class="text-white">Sound 1</p>
+                        {% for sound in random_sounds %}
+                        <div class="bg-white/20 rounded-lg p-4">
+                            <p class="text-white">{{ sound.name }}</p>
+                            <audio controls class="w-full mt-2">
+                                <source src="{{ sound.file.url }}" type="audio/mpeg">
+                            </audio>
                         </div>
-                        <div class="bg-white/20 rounded-lg p-4 hover:bg-white/30 transition-colors cursor-pointer">
-                            <div class="aspect-video bg-gray-200 rounded-lg mb-2"></div>
-                            <p class="text-white">Sound 2</p>
-                        </div>
-                        <div class="bg-white/20 rounded-lg p-4 hover:bg-white/30 transition-colors cursor-pointer">
-                            <div class="aspect-video bg-gray-200 rounded-lg mb-2"></div>
-                            <p class="text-white">Sound 3</p>
-                        </div>
+                        {% endfor %}
                     </div>
+                </div>
 
-                    <!-- Dialogues -->
+                <!-- Dialogues -->
+                <div class="bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
+                    <h2 class="text-2xl font-poppins text-white mb-6">Dialogues</h2>
                     <div class="space-y-4">
-                        <div class="bg-white/20 rounded-lg p-4 hover:bg-white/30 transition-colors cursor-pointer">
-                            <div class="aspect-video bg-gray-200 rounded-lg mb-2"></div>
-                            <p class="text-white">Dialogue 1</p>
+                        {% for dialogue in random_dialogues %}
+                        <div class="bg-white/20 rounded-lg p-4">
+                            <p class="text-white">{{ dialogue.name }}</p>
+                            <audio controls class="w-full mt-2">
+                                <source src="{{ dialogue.file.url }}" type="audio/mpeg">
+                            </audio>
                         </div>
-                        <div class="bg-white/20 rounded-lg p-4 hover:bg-white/30 transition-colors cursor-pointer">
-                            <div class="aspect-video bg-gray-200 rounded-lg mb-2"></div>
-                            <p class="text-white">Dialogue 2</p>
-                        </div>
-                        <div class="bg-white/20 rounded-lg p-4 hover:bg-white/30 transition-colors cursor-pointer">
-                            <div class="aspect-video bg-gray-200 rounded-lg mb-2"></div>
-                            <p class="text-white">Dialogue 3</p>
-                        </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="bg-slateblueSoft py-4 px-6 mt-8">
-        <div class="container mx-auto flex justify-between items-center">
-            <p class="text-warmcream">&copy; 2024 Dreamin</p>
-            <div class="flex space-x-4">
-                <a href="" class="text-warmcream hover:text-white transition-colors">Twitter</a>
-                <a href="" class="text-warmcream hover:text-white transition-colors">Instagram</a>
-                <a href="" class="text-warmcream hover:text-white transition-colors">Discord</a>
-            </div>
-        </div>
-    </footer>
-    <div class="container">
-        {% if user.is_authenticated %}
-            <h1>Welcome, {{ user.username }}!</h1>
-            <p>Email: {{ user.email }}</p>
-            <a href="{% url 'logout' %}">Logout</a>
-        {% else %}
-            <h1>Welcome to Dreamin</h1>
-            <p>You are not logged in.</p>
-            <a href="{% url 'login' %}">Login</a>
-        {% endif %}
     </div>
 </body>
 </html>
