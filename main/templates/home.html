@@ -3,61 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(to bottom, #f4f4f9, #d8e8f5);
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+    <title>Dreamin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        periwinkle: '#A6C1EE',
+                        lavender: '#C5B3E6',
+                        softpink: '#FFD9E8',
+                        warmcream: '#FAF3DD',
+                        slateblueSoft: '#748CAB',
+                    },
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif'],
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                },
+            },
         }
-
-        .container {
-            text-align: center;
-            padding: 30px;
-            border-radius: 12px;
-            background: #fff;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            width: 90%;
-            max-width: 400px;
-        }
-
-        .container h1 {
-            font-size: 2rem;
-            color: #1CB5E0;
-            margin-bottom: 15px;
-        }
-
-        .container p {
-            margin: 10px 0;
-            font-size: 1rem;
-            color: #555;
-        }
-
-        .container a {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background: #DC1F84;
-            color: #fff;
-            font-size: 1rem;
-            text-decoration: none;
-            border-radius: 8px;
-            transition: background 0.3s ease, transform 0.2s;
-        }
-
-        .container a:hover {
-            background: #6D2476;
-            transform: scale(1.05);
-        }
-    </style>
+    </script>
 </head>
-<body>
+<body class="min-h-screen bg-warmcream font-inter">
+    <!-- Header -->
+    <header class="bg-slateblueSoft py-4 px-6 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="" class="flex items-center space-x-2">
+                <div class="w-8 h-8 bg-warmcream rounded-full flex items-center justify-center">
+                    <div class="w-6 h-6 bg-periwinkle rounded-full transform -translate-x-1"></div>
+                </div>
+                <span class="text-2xl font-bold text-warmcream font-poppins">Dreamin</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8 flex gap-8">
+        <!-- Sidebar -->
+        <div class="w-80 flex-shrink-0">
+            <!-- Profile Section -->
+            <div class="bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm mb-6">
+                <h2 class="text-2xl font-poppins text-white mb-6">Profile</h2>
+                <div class="space-y-4 text-center">
+                    <h3 class="text-xl text-white">Hello,</h3>
+                    <p class="text-2xl font-semibold text-white">Username</p>
+                    <p class="text-white/80">Email: Username@gmail.com</p>
+                    <button class="w-full bg-softpink hover:bg-softpink/80 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                        Logout
+                    </button>
+                </div>
+            </div>
+
+            <!-- Recent Dreams -->
+            <div class="bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
+                <h2 class="text-2xl font-poppins text-white mb-6">Recent Dreams</h2>
+                <div class="space-y-4">
+                    <div class="bg-white/20 rounded-lg p-4 hover:bg-white/30 transition-colors cursor-pointer">
+                        <p class="text-white">Dream Example 1</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Area -->
+        <div class="flex-1 space-y-8">
+            <!-- Libraries Section -->
+            <div class="bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
+                <h2 class="text-2xl font-poppins text-white mb-6">Libraries</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="bg-white/20 rounded-lg p-4 hover:bg-white/30 transition-colors cursor-pointer">
+                        <div class="aspect-video bg-gray-200 rounded-lg mb-2"></div>
+                        <p class="text-white">Dream Example 1</p>
+                    </div>
+                    <div class="bg-white/20 rounded-lg p-4 hover:bg-white/30 transition-colors cursor-pointer">
+                        <div class="aspect-video bg-gray-200 rounded-lg mb-2"></div>
+                        <p class="text-white">Dream Example 2</p>
+                    </div>
+                    <div class="bg-white/20 rounded-lg p-4 hover:bg-white/30 transition-colors cursor-pointer">
+                        <div class="aspect-video bg-gray-200 rounded-lg mb-2"></div>
+                        <p class="text-white">Dream Example 3</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Components Section -->
+            <div class="bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
+                <h2 class="text-2xl font-poppins text-white mb-6">Components</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Animations -->
+                    <div class="space-y-4">
+                        <div class="bg-white/20 rounded-lg p-4 hover:bg-white/30 transition-colors cursor-pointer">
+                            <div class="aspect-video bg-gray-200 rounded-lg mb-2"></div>
+                            <p class="text-white">Animation 1</p>
+                        </div>
+                        <div class="bg-white/20 rounded-lg p-4 hover:bg-white/30 transition-colors cursor-pointer">
+                            <div class="aspect-video bg-gray-200 rounded-lg mb-2"></div>
+                            <p class="text-white">Animation 2</p>
+                        </div>
+                        <div class="bg-white/20 rounded-lg p-4 hover:bg-white/30 transition-colors cursor-pointer">
+                            <div class="aspect-video bg-gray-200 rounded-lg mb-2"></div>
+                            <p class="text-white">Animation 3</p>
+                        </div>
+                    </div>
+
+                    <!-- Sounds -->
+                    <div class="space-y-4">
+                        <div class="bg-white/20 rounded-lg p-4 hover:bg-white/30 transition-colors cursor-pointer">
+                            <div class="aspect-video bg-gray-200 rounded-lg mb-2"></div>
+                            <p class="text-white">Sound 1</p>
+                        </div>
+                        <div class="bg-white/20 rounded-lg p-4 hover:bg-white/30 transition-colors cursor-pointer">
+                            <div class="aspect-video bg-gray-200 rounded-lg mb-2"></div>
+                            <p class="text-white">Sound 2</p>
+                        </div>
+                        <div class="bg-white/20 rounded-lg p-4 hover:bg-white/30 transition-colors cursor-pointer">
+                            <div class="aspect-video bg-gray-200 rounded-lg mb-2"></div>
+                            <p class="text-white">Sound 3</p>
+                        </div>
+                    </div>
+
+                    <!-- Dialogues -->
+                    <div class="space-y-4">
+                        <div class="bg-white/20 rounded-lg p-4 hover:bg-white/30 transition-colors cursor-pointer">
+                            <div class="aspect-video bg-gray-200 rounded-lg mb-2"></div>
+                            <p class="text-white">Dialogue 1</p>
+                        </div>
+                        <div class="bg-white/20 rounded-lg p-4 hover:bg-white/30 transition-colors cursor-pointer">
+                            <div class="aspect-video bg-gray-200 rounded-lg mb-2"></div>
+                            <p class="text-white">Dialogue 2</p>
+                        </div>
+                        <div class="bg-white/20 rounded-lg p-4 hover:bg-white/30 transition-colors cursor-pointer">
+                            <div class="aspect-video bg-gray-200 rounded-lg mb-2"></div>
+                            <p class="text-white">Dialogue 3</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slateblueSoft py-4 px-6 mt-8">
+        <div class="container mx-auto flex justify-between items-center">
+            <p class="text-warmcream">&copy; 2024 Dreamin</p>
+            <div class="flex space-x-4">
+                <a href="" class="text-warmcream hover:text-white transition-colors">Twitter</a>
+                <a href="" class="text-warmcream hover:text-white transition-colors">Instagram</a>
+                <a href="" class="text-warmcream hover:text-white transition-colors">Discord</a>
+            </div>
+        </div>
+    </footer>
     <div class="container">
         {% if user.is_authenticated %}
             <h1>Welcome, {{ user.username }}!</h1>
