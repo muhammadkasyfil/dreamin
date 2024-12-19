@@ -80,11 +80,10 @@ DATABASES = {
         'NAME': 'database',
         'USER': 'user',
         'PASSWORD': 'password',
-        'HOST': 'postgres',  
+        'HOST': 'postgres',  # This matches the service name in docker-compose.yml
         'PORT': '5432',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

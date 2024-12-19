@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from django import forms
+from django.contrib.auth.decorators import login_required
+from .models import Dream, DreamAnimation, DreamSound, Dialogue, Reflection
 
 # Landing Page View
 def index(request):
@@ -62,3 +64,48 @@ def login_view(request):
         else:
             messages.error(request, "Invalid username or password.")
     return render(request, "index.html")
+
+@login_required
+def create_dream(request):
+    if request.method == 'POST':
+        dream = Dream.objects.create(
+            user=request.user,
+            title=request.POST.get('title'),
+            description=request.POST.get('description')
+        )
+        
+        # Handle animations
+        animation_ids = request.POST.getlist('animations')
+        dream.animations.set(DreamAnimation.objects.filter(id__in=animation_ids))
+        
+        # Handle sounds
+        sound_ids = request.POST.getlist('sounds')
+        dream.sounds.set(DreamSound.objects.filter(id__in=sound_ids))
+        
+        # Handle dialogues
+        dialogue_ids = request.POST.getlist('dialogues')
+        dream.dialogues.set(Dialogue.objects.filter(id__in=dialogue_ids))
+        
+        return redirect('dream_detail', dream_id=dream.id)
+    
+    context = {
+        'animations': DreamAnimation.objects.all(),
+        'sounds': DreamSound.objects.all(),
+        'dialogues': Dialogue.objects.all(),
+    }
+    return render(request, 'main/dreamcreation.html', context)
+
+@login_required
+def create_reflection(request, dream_id):
+    if request.method == 'POST':
+        dream = Dream.objects.get(id=dream_id)
+        reflection = Reflection.objects.create(
+            user=request.user,
+            dream=dream,
+            content=request.POST.get('reflection')
+        )
+        return redirect('dream_detail', dream_id=dream.id)
+    
+    return render(request, 'main/dreamjournal.html', {
+        'dream': Dream.objects.get(id=dream_id)
+    })

@@ -1,15 +1,20 @@
-# Menggunakan Python sebagai base image
 FROM python:3.10
 
-# Set working directory
 WORKDIR /app
 
-# Salin file requirements.txt dan install dependensi
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose port untuk server Django
+COPY . .
+
+# Create a simple entrypoint script
+RUN echo '#!/bin/bash\n\
+echo "Waiting for postgres..."\n\
+sleep 5\n\
+python manage.py migrate\n\
+python manage.py runserver 0.0.0.0:8000' > /entrypoint.sh && \
+chmod +x /entrypoint.sh
+
 EXPOSE 8000
 
-# Jalankan server Django
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["/entrypoint.sh"]
