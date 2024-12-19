@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from django import forms
 from django.contrib.auth.decorators import login_required
@@ -195,3 +195,7 @@ def dream_detail(request, dream_id):
         'reflections': reflections
     }
     return render(request, 'dream_detail.html', context)
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')

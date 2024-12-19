@@ -27,7 +27,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('login/', views.login_view, name='login'),
     path('signup/', views.signup, name='signup'),
-    path('logout/', LogoutView.as_view(next_page='index'), name='logout'),
+    path('logout/', views.logout_view, name='logout'),
     path("home/", views.home_view, name="home"),
     path("create-dream/", views.create_dream_view, name="create_dream"),
     path("dreamjournal/", views.dreamjournal_view, name="dreamjournal"),
