@@ -124,17 +124,20 @@ def create_dream_view(request):
             description=request.POST.get('description')
         )
         
-        # Handle animations
-        animation_ids = request.POST.getlist('animations')
-        dream.animations.set(DreamAnimation.objects.filter(id__in=animation_ids))
+        # Handle single animation
+        animation_id = request.POST.get('animation')
+        if animation_id:
+            dream.animations.add(DreamAnimation.objects.get(id=animation_id))
         
-        # Handle sounds
-        sound_ids = request.POST.getlist('sounds')
-        dream.sounds.set(DreamSound.objects.filter(id__in=sound_ids))
+        # Handle single sound
+        sound_id = request.POST.get('sound')
+        if sound_id:
+            dream.sounds.add(DreamSound.objects.get(id=sound_id))
         
-        # Handle dialogues
-        dialogue_ids = request.POST.getlist('dialogues')
-        dream.dialogues.set(Dialogue.objects.filter(id__in=dialogue_ids))
+        # Handle single dialogue
+        dialogue_id = request.POST.get('dialogue')
+        if dialogue_id:
+            dream.dialogues.add(Dialogue.objects.get(id=dialogue_id))
         
         return redirect('home')
     
@@ -143,7 +146,7 @@ def create_dream_view(request):
         'sounds': DreamSound.objects.all(),
         'dialogues': Dialogue.objects.all(),
     }
-    return render(request, 'main/dreamcreation.html', context)
+    return render(request, 'dreamcreation.html', context)
 
 @login_required
 def create_reflection(request, dream_id):
@@ -156,7 +159,7 @@ def create_reflection(request, dream_id):
         )
         return redirect('dream_detail', dream_id=dream.id)
     
-    return render(request, 'main/dreamjournal.html', {
+    return render(request, 'dreamjournal.html', {
         'dream': Dream.objects.get(id=dream_id)
     })
 
