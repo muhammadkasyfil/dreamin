@@ -16,17 +16,28 @@ def home_view(request):
     
     user_dreams = Dream.objects.filter(user=request.user).order_by('-created_at')
     all_dreams = Dream.objects.all().order_by('-created_at')
+    animations = DreamAnimation.objects.all()
+    sounds = DreamSound.objects.all()
+    dialogues = Dialogue.objects.all()
     
     if search_query:
         user_dreams = user_dreams.filter(title__icontains=search_query)
         all_dreams = all_dreams.filter(title__icontains=search_query)
+        animations = animations.filter(name__icontains=search_query)
+        sounds = sounds.filter(name__icontains=search_query)
+        dialogues = dialogues.filter(name__icontains=search_query)
+    else:
+        # Only randomize if not searching
+        animations = animations.order_by('?')
+        sounds = sounds.order_by('?')
+        dialogues = dialogues.order_by('?')
     
     context = {
         'user_dreams': user_dreams,
         'all_dreams': all_dreams,
-        'random_animations': DreamAnimation.objects.order_by('?')[:3],
-        'random_sounds': DreamSound.objects.order_by('?')[:3],
-        'random_dialogues': Dialogue.objects.order_by('?')[:3],
+        'animations': animations[:3],
+        'sounds': sounds[:3],
+        'dialogues': dialogues[:3],
         'latest_dream': Dream.objects.filter(user=request.user).order_by('-created_at').first(),
         'search_query': search_query,
     }

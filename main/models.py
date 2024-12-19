@@ -46,6 +46,7 @@ class Dream(models.Model):
     animations = models.ManyToManyField(DreamAnimation, blank=True)
     sounds = models.ManyToManyField(DreamSound, blank=True)
     dialogues = models.ManyToManyField(Dialogue, blank=True)
+    preview_video = models.FileField(upload_to='dream_previews/', null=True, blank=True)
 
     def __str__(self):
         return f"{self.title} by {self.user.username if self.user else 'unknown'}"

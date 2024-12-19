@@ -37,8 +37,11 @@
             </a>
             <div class="flex items-center space-x-4">
                 <form class="relative" action="{% url 'home' %}" method="GET">
-                    <input type="text" name="search" placeholder="Search dreams..." 
-                           class="bg-white/20 border border-white/30 text-white placeholder-white/70 rounded-lg py-2 px-4">
+                    <input type="text" 
+                           name="search" 
+                           placeholder="Search dreams, animations, sounds..." 
+                           value="{{ search_query }}"
+                           class="bg-white/20 border border-white/30 text-white placeholder-white/70 rounded-lg py-2 px-4 w-64">
                 </form>
                 <a href="{% url 'logout' %}" class="bg-softpink hover:bg-softpink/80 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
                     Logout
@@ -100,9 +103,17 @@
                 <div class="bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
                     <h2 class="text-2xl font-poppins text-white mb-6">Animations</h2>
                     <div class="space-y-4">
-                        {% for animation in random_animations %}
+                        {% for animation in animations %}
                         <div class="bg-white/20 rounded-lg p-4">
-                            <p class="text-white">{{ animation.name }}</p>
+                            <p class="text-white mb-2">{{ animation.name }}</p>
+                            {% if animation.file %}
+                            <video 
+                                class="w-full rounded cursor-pointer" 
+                                src="{{ animation.file.url }}"
+                                onclick="openPreview(this.src, 'video')"
+                                preload="metadata">
+                            </video>
+                            {% endif %}
                         </div>
                         {% endfor %}
                     </div>
@@ -112,7 +123,7 @@
                 <div class="bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
                     <h2 class="text-2xl font-poppins text-white mb-6">Sounds</h2>
                     <div class="space-y-4">
-                        {% for sound in random_sounds %}
+                        {% for sound in sounds %}
                         <div class="bg-white/20 rounded-lg p-4">
                             <p class="text-white">{{ sound.name }}</p>
                             <audio controls class="w-full mt-2">
@@ -127,7 +138,7 @@
                 <div class="bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
                     <h2 class="text-2xl font-poppins text-white mb-6">Dialogues</h2>
                     <div class="space-y-4">
-                        {% for dialogue in random_dialogues %}
+                        {% for dialogue in dialogues %}
                         <div class="bg-white/20 rounded-lg p-4">
                             <p class="text-white">{{ dialogue.name }}</p>
                             <audio controls class="w-full mt-2">
@@ -140,5 +151,52 @@
             </div>
         </div>
     </div>
+
+    <!-- Add this modal at the bottom of the body -->
+    <div id="previewModal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50">
+        <div class="max-w-4xl w-full p-4">
+            <div class="relative">
+                <button onclick="closePreview()" class="absolute -top-10 right-0 text-white hover:text-softpink">
+                    Close
+                </button>
+                <div id="previewContent" class="w-full rounded-lg overflow-hidden">
+                    <!-- Content will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function openPreview(src, type) {
+        const modal = document.getElementById('previewModal');
+        const content = document.getElementById('previewContent');
+        
+        if (type === 'video') {
+            content.innerHTML = `
+                <video controls class="w-full">
+                    <source src="${src}" type="video/mp4">
+                </video>
+            `;
+        }
+        
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closePreview() {
+        const modal = document.getElementById('previewModal');
+        const content = document.getElementById('previewContent');
+        content.innerHTML = '';
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('previewModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closePreview();
+        }
+    });
+    </script>
 </body>
 </html>
