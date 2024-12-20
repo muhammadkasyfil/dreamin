@@ -15,6 +15,9 @@ services:
       - DEBUG=False
       - SECRET_KEY=your-secret-key-here
       - ALLOWED_HOSTS=.railway.app,localhost,127.0.0.1
+      - CLOUDINARY_CLOUD_NAME=dysfn8kdg
+      - CLOUDINARY_API_KEY=435326248528675
+      - CLOUDINARY_API_SECRET=ZlmokmXJXPveQ0VVx...
     depends_on:
       - migration
 

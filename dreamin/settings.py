@@ -161,8 +161,19 @@ LOGOUT_REDIRECT_URL = '/login/'
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 # Media files (uploads)
-MEDIA_URL = '/media/'
+MEDIA_URL = '/media/'  # This will be overridden by Cloudinary in production
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Cloudinary settings
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
+    'SECURE': True
+}
+
+# Use Cloudinary in both development and production
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Create subdirectories for different file types
 ANIMATION_ROOT = os.path.join(MEDIA_ROOT, 'animations')
@@ -174,20 +185,4 @@ CSRF_TRUSTED_ORIGINS = [
     'https://dreamin-web-production.up.railway.app',
     'https://*.railway.app'
 ]
-
-
-# Use local storage for now
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# Add Cloudinary settings
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET')
-}
-
-# Update storage settings
-if not DEBUG:
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 

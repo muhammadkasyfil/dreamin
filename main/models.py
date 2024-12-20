@@ -48,9 +48,9 @@ class DreamAnimation(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def get_file_url(self):
-        if settings.DEBUG:
-            return self.file.url if self.file else ''
-        return f"{settings.MEDIA_URL}{self.file.name}" if self.file else ''
+        if self.file:
+            return self.file.url
+        return ''
 
     def __str__(self):
         return self.name
@@ -65,9 +65,9 @@ class DreamSound(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def get_file_url(self):
-        if settings.DEBUG:
-            return self.file.url if self.file else ''
-        return f"{settings.MEDIA_URL}{self.file.name}" if self.file else ''
+        if self.file:
+            return self.file.url
+        return ''
 
     def __str__(self):
         return self.name
@@ -78,9 +78,9 @@ class Dialogue(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def get_file_url(self):
-        if settings.DEBUG:
-            return self.file.url if self.file else ''
-        return f"{settings.MEDIA_URL}{self.file.name}" if self.file else ''
+        if self.file:
+            return self.file.url
+        return ''
 
     def __str__(self):
         return self.name
