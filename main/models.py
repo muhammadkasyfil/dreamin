@@ -7,12 +7,6 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
 
-# Create media directories
-os.makedirs(settings.MEDIA_ROOT, exist_ok=True)
-os.makedirs(os.path.join(settings.MEDIA_ROOT, 'animations'), exist_ok=True)
-os.makedirs(os.path.join(settings.MEDIA_ROOT, 'sounds'), exist_ok=True)
-os.makedirs(os.path.join(settings.MEDIA_ROOT, 'dialogues'), exist_ok=True)
-
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(max_length=500, blank=True)
