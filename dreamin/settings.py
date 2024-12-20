@@ -141,15 +141,12 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'dreamin/static'),
 ]
 
 # Whitenoise configuration
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Additional locations of static files
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -179,11 +176,6 @@ CLOUDINARY_STORAGE = {
 
 # Always use Cloudinary for media
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-
-# Create subdirectories for different file types
-ANIMATION_ROOT = os.path.join(MEDIA_ROOT, 'animations')
-SOUND_ROOT = os.path.join(MEDIA_ROOT, 'sounds')
-DIALOGUE_ROOT = os.path.join(MEDIA_ROOT, 'dialogues')
 
 # Also add this for security
 CSRF_TRUSTED_ORIGINS = [
