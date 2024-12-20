@@ -5,6 +5,10 @@ from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
+from django.conf import settings
+from storages.backends.s3boto3 import S3Boto3Storage
+
+storage = S3Boto3Storage() if not settings.DEBUG else None
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -34,6 +38,7 @@ class DreamAnimation(models.Model):
     name = models.CharField(max_length=100)
     file = models.FileField(
         upload_to='animations/',
+        storage=storage,
         validators=[validate_file_size, validate_file_extension],
         null=True,
         blank=True
@@ -50,7 +55,12 @@ class DreamAnimation(models.Model):
 
 class DreamSound(models.Model):
     name = models.CharField(max_length=100)
-    file = models.FileField(upload_to='sounds/', null=True, blank=True)
+    file = models.FileField(
+        upload_to='sounds/',
+        storage=storage,
+        null=True,
+        blank=True
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def get_file_url(self):
@@ -63,7 +73,7 @@ class DreamSound(models.Model):
 
 class Dialogue(models.Model):
     name = models.CharField(max_length=100)
-    file = models.FileField(upload_to='dialogues/', null=True, blank=True)
+    file = models.FileField(upload_to='dialogues/', storage=storage, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def get_file_url(self):
