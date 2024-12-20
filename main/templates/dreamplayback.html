@@ -45,16 +45,10 @@
                 </div>
                 <span class="text-2xl font-bold text-warmcream font-poppins">Dreamin</span>
             </a>
-            <div class="flex space-x-4">
-                <a href="{% url 'create_reflection' dream.id %}" 
-                   class="bg-periwinkle hover:bg-periwinkle/80 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
-                    Write Journal
-                </a>
-                <a href="{% url 'logout' %}" 
-                   class="bg-softpink hover:bg-softpink/80 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
-                    Logout
-                </a>
-            </div>
+            <a href="{% url 'logout' %}" 
+               class="bg-softpink hover:bg-softpink/80 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                Logout
+            </a>
         </div>
     </header>
 
@@ -124,6 +118,14 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Write Journal Button -->
+            <div class="mt-8 flex justify-center">
+                <a href="{% url 'create_reflection' dream.id %}" 
+                   class="bg-periwinkle hover:bg-periwinkle/80 text-white font-semibold py-3 px-8 rounded-lg transition-colors">
+                    Write Journal
+                </a>
             </div>
         </div>
     </main>
