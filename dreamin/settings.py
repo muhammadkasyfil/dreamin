@@ -27,7 +27,13 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'your-dev-secret-key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['*.railway.app', 'localhost', '127.0.0.1', '0.0.0.0']
+ALLOWED_HOSTS = [
+    'dreamin-web-production.up.railway.app',  # Your Railway domain
+    'localhost', 
+    '127.0.0.1', 
+    '0.0.0.0',
+    '.railway.app'  # Allows all Railway subdomains
+]
 
 # Application definition
 
@@ -139,4 +145,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 ANIMATION_ROOT = os.path.join(MEDIA_ROOT, 'animations')
 SOUND_ROOT = os.path.join(MEDIA_ROOT, 'sounds')
 DIALOGUE_ROOT = os.path.join(MEDIA_ROOT, 'dialogues')
+
+# Also add this for security
+CSRF_TRUSTED_ORIGINS = [
+    'https://dreamin-web-production.up.railway.app',
+    'https://*.railway.app'
+]
 
