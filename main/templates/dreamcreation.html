@@ -72,7 +72,7 @@
                                 <span class="text-white">{{ animation.name }}</span>
                             </label>
                             {% if animation.file %}
-                            <video class="w-full mt-2 rounded cursor-pointer" src="{{ animation.get_file_url }}" onclick="openPreview(this.src, 'video')"></video>
+                            <video class="w-full mt-2 rounded cursor-pointer" src="{{ animation.file.url }}" onclick="openPreview(this.src, 'video')"></video>
                             {% endif %}
                         </div>
                         {% endfor %}
