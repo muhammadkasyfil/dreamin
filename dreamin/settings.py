@@ -82,11 +82,23 @@ WSGI_APPLICATION = 'dreamin.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://user:password@localhost:5432/database')
+DATABASE_URL = os.getenv('DATABASE_URL')
 
-DATABASES = {
-    'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
-}
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'database',
+            'USER': 'user',
+            'PASSWORD': 'password',
+            'HOST': 'localhost',
+            'PORT': '5432',
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
