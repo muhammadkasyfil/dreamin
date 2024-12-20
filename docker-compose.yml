@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    command: gunicorn dreamin.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - .:/app
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://dreamin_owner:yVRMfOpx1H3L@ep-floral-violet-a1ak1di7.ap-southeast-1.aws.neon.tech/dreamin?sslmode=require
+      - DEBUG=False
+      - SECRET_KEY=your-secret-key-here
+      - ALLOWED_HOSTS=.railway.app,localhost,127.0.0.1
+    depends_on:
+      - migration
+
+  migration:
+    build: .
+    command: python manage.py migrate
+    volumes:
+      - .:/app
+    environment:
+      - DATABASE_URL=postgresql://dreamin_owner:yVRMfOpx1H3L@ep-floral-violet-a1ak1di7.ap-southeast-1.aws.neon.tech/dreamin?sslmode=require
+
+volumes:
+  static_volume:
+  media_volume: 
