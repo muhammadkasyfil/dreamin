@@ -3,7 +3,9 @@ version: '3.8'
 services:
   web:
     build: .
-    command: gunicorn dreamin.wsgi:application --bind 0.0.0.0:8000
+    command: >
+        sh -c "python manage.py collectstatic --noinput &&
+               gunicorn dreamin.wsgi:application --bind 0.0.0.0:8000"
     volumes:
       - .:/app
       - static_volume:/app/staticfiles
@@ -16,7 +18,7 @@ services:
       - ALLOWED_HOSTS=.railway.app,localhost,127.0.0.1
       - CLOUDINARY_CLOUD_NAME=dysfn8kdg
       - CLOUDINARY_API_KEY=435326248528675
-      - CLOUDINARY_API_SECRET=ZlmokmXJXPveQ0VVx...
+      - CLOUDINARY_API_SECRET=ZlmokmXJXPveQ0VVxTodkaGxoJY
     depends_on:
       - migration
 
