@@ -25,8 +25,17 @@
             },
         }
     </script>
+    <style>
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
 </head>
-<body class="min-h-screen bg-warmcream font-inter">
+<body class="min-h-screen bg-warmcream font-inter flex flex-col">
     <header class="bg-slateblueSoft py-4 px-6 shadow-lg">
         <div class="container mx-auto flex justify-between items-center">
             <a href="{% url 'home' %}" class="flex items-center space-x-2">
@@ -50,109 +59,114 @@
         </div>
     </header>
 
-    <div class="container mx-auto px-4 py-8 flex gap-8">
-        <!-- Sidebar -->
-        <div class="w-80 flex-shrink-0">
-            <!-- Profile Section -->
-            <div class="bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm mb-6">
-                <h2 class="text-2xl font-poppins text-white mb-6">Profile</h2>
-                <div class="space-y-4 text-center">
-                    <h3 class="text-xl text-white">Hello,</h3>
-                    <p class="text-2xl font-semibold text-white">{{ user.username }}</p>
-                    <p class="text-white/80">{{ user.email }}</p>
+    <main class="container mx-auto px-4 py-8 flex-grow">
+        <div class="flex gap-8">
+            <!-- Sidebar -->
+            <div class="w-80 flex-shrink-0 space-y-6">
+                <!-- Profile Section -->
+                <div class="bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
+                    <h2 class="text-2xl font-poppins text-white mb-6">Profile</h2>
+                    <div class="space-y-4 text-center">
+                        <h3 class="text-xl text-white">Hello,</h3>
+                        <p class="text-2xl font-semibold text-white">{{ user.username }}</p>
+                        <p class="text-white/80">{{ user.email }}</p>
+                    </div>
                 </div>
+
+                <!-- Latest Dream -->
+                {% if latest_dream %}
+                <div class="bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
+                    <h2 class="text-2xl font-poppins text-white mb-4">Latest Dream</h2>
+                    <div class="bg-white/20 rounded-lg p-4">
+                        <h3 class="text-white font-semibold">{{ latest_dream.title }}</h3>
+                        <p class="text-white/80 text-sm">{{ latest_dream.created_at|date:"M d, Y" }}</p>
+                    </div>
+                </div>
+                {% endif %}
             </div>
 
-            <!-- Latest Dream -->
-            {% if latest_dream %}
-            <div class="bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
-                <h2 class="text-2xl font-poppins text-white mb-6">Latest Dream</h2>
-                <div class="bg-white/20 rounded-lg p-4">
-                    <h3 class="text-white font-semibold">{{ latest_dream.title }}</h3>
-                    <p class="text-white/80 text-sm">{{ latest_dream.created_at|date:"M d, Y" }}</p>
-                </div>
-            </div>
-            {% endif %}
-        </div>
-
-        <!-- Main Content -->
-        <div class="flex-1 space-y-8">
-            <!-- Dream Library -->
-            <div class="bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-poppins text-white">Dream Library</h2>
-                    <a href="{% url 'create_dream' %}" class="bg-periwinkle hover:bg-periwinkle/80 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
-                        Create Dream
-                    </a>
-                </div>
-                <div class="overflow-x-auto">
-                    <div class="flex space-x-4 pb-4">
-                        {% for dream in user_dreams %}
-                        <a href="{% url 'dream_playback' dream.id %}" class="flex-shrink-0 w-64 bg-white/20 rounded-lg p-4">
-                            <h3 class="text-white font-semibold">{{ dream.title }}</h3>
-                            <p class="text-white/80 text-sm">{{ dream.created_at|date:"M d, Y" }}</p>
+            <!-- Main Content -->
+            <div class="flex-grow space-y-8">
+                <!-- Dream Library -->
+                <div class="bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-poppins text-white">Dream Library</h2>
+                        <a href="{% url 'create_dream' %}" class="bg-periwinkle hover:bg-periwinkle/80 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                            Create Dream
                         </a>
-                        {% endfor %}
                     </div>
-                </div>
-            </div>
-
-            <!-- Components Sections -->
-            <div class="grid grid-cols-3 gap-6">
-                <!-- Animations -->
-                <div class="bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
-                    <h2 class="text-2xl font-poppins text-white mb-6">Animations</h2>
-                    <div class="space-y-4">
-                        {% for animation in animations %}
-                        <div class="bg-white/20 rounded-lg p-4">
-                            <p class="text-white mb-2">{{ animation.name }}</p>
-                            {% if animation.file %}
-                            <video 
-                                class="w-full rounded cursor-pointer" 
-                                src="{{ animation.file.url }}"
-                                onclick="openPreview(this.src, 'video')"
-                                preload="metadata">
-                            </video>
-                            {% endif %}
+                    <div class="max-h-[400px] overflow-y-auto scrollbar-hide">
+                        <div class="grid grid-cols-2 gap-4 pb-4">
+                            {% for dream in user_dreams %}
+                            <a href="{% url 'dream_playback' dream.id %}" class="bg-white/20 rounded-lg p-4 hover:bg-white/30 transition-colors">
+                                <h3 class="text-white font-semibold">{{ dream.title }}</h3>
+                                <p class="text-white/80 text-sm">{{ dream.created_at|date:"M d, Y" }}</p>
+                            </a>
+                            {% endfor %}
                         </div>
-                        {% endfor %}
                     </div>
                 </div>
 
-                <!-- Sounds -->
-                <div class="bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
-                    <h2 class="text-2xl font-poppins text-white mb-6">Sounds</h2>
-                    <div class="space-y-4">
-                        {% for sound in sounds %}
-                        <div class="bg-white/20 rounded-lg p-4">
-                            <p class="text-white">{{ sound.name }}</p>
-                            <audio controls class="w-full mt-2">
-                                <source src="{{ sound.file.url }}" type="audio/mpeg">
-                            </audio>
+                <!-- Components Grid -->
+                <div class="grid grid-cols-3 gap-6">
+                    <!-- Animations -->
+                    <div class="bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
+                        <h2 class="text-2xl font-poppins text-white mb-4">Animations</h2>
+                        <div class="space-y-4 max-h-[400px] overflow-y-auto scrollbar-hide">
+                            {% for animation in animations %}
+                            <div class="bg-white/20 rounded-lg p-4">
+                                <p class="text-white mb-2">{{ animation.name }}</p>
+                                {% if animation.file %}
+                                <video class="w-full rounded cursor-pointer" src="{{ animation.file.url }}" 
+                                       onclick="openPreview(this.src, 'video')" preload="metadata">
+                                </video>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
                         </div>
-                        {% endfor %}
                     </div>
-                </div>
 
-                <!-- Dialogues -->
-                <div class="bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
-                    <h2 class="text-2xl font-poppins text-white mb-6">Dialogues</h2>
-                    <div class="space-y-4">
-                        {% for dialogue in dialogues %}
-                        <div class="bg-white/20 rounded-lg p-4">
-                            <p class="text-white">{{ dialogue.name }}</p>
-                            <audio controls class="w-full mt-2">
-                                <source src="{{ dialogue.file.url }}" type="audio/mpeg">
-                            </audio>
+                    <!-- Sounds -->
+                    <div class="bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
+                        <h2 class="text-2xl font-poppins text-white mb-4">Sounds</h2>
+                        <div class="space-y-4 max-h-[400px] overflow-y-auto scrollbar-hide">
+                            {% for sound in sounds %}
+                            <div class="bg-white/20 rounded-lg p-4">
+                                <p class="text-white">{{ sound.name }}</p>
+                                <audio controls class="w-full mt-2">
+                                    <source src="{{ sound.file.url }}" type="audio/mpeg">
+                                </audio>
+                            </div>
+                            {% endfor %}
                         </div>
-                        {% endfor %}
+                    </div>
+
+                    <!-- Dialogues -->
+                    <div class="bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
+                        <h2 class="text-2xl font-poppins text-white mb-4">Dialogues</h2>
+                        <div class="space-y-4 max-h-[400px] overflow-y-auto scrollbar-hide">
+                            {% for dialogue in dialogues %}
+                            <div class="bg-white/20 rounded-lg p-4">
+                                <p class="text-white">{{ dialogue.name }}</p>
+                                <audio controls class="w-full mt-2">
+                                    <source src="{{ dialogue.file.url }}" type="audio/mpeg">
+                                </audio>
+                            </div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
-    <!-- Add this modal at the bottom of the body -->
+    <footer class="bg-slateblueSoft py-4 px-6 mt-8">
+        <div class="container mx-auto text-center text-warmcream">
+            &copy; 2024 Dreamin
+        </div>
+    </footer>
+
+    <!-- Preview Modal -->
     <div id="previewModal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50">
         <div class="max-w-4xl w-full p-4">
             <div class="relative">
@@ -167,36 +181,35 @@
     </div>
 
     <script>
-    function openPreview(src, type) {
-        const modal = document.getElementById('previewModal');
-        const content = document.getElementById('previewContent');
-        
-        if (type === 'video') {
-            content.innerHTML = `
-                <video controls class="w-full">
-                    <source src="${src}" type="video/mp4">
-                </video>
-            `;
+        function openPreview(src, type) {
+            const modal = document.getElementById('previewModal');
+            const content = document.getElementById('previewContent');
+            
+            if (type === 'video') {
+                content.innerHTML = `
+                    <video controls class="w-full">
+                        <source src="${src}" type="video/mp4">
+                    </video>
+                `;
+            }
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
         }
-        
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-    }
 
-    function closePreview() {
-        const modal = document.getElementById('previewModal');
-        const content = document.getElementById('previewContent');
-        content.innerHTML = '';
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-    }
-
-    // Close modal when clicking outside
-    document.getElementById('previewModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closePreview();
+        function closePreview() {
+            const modal = document.getElementById('previewModal');
+            const content = document.getElementById('previewContent');
+            content.innerHTML = '';
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
         }
-    });
+
+        document.getElementById('previewModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePreview();
+            }
+        });
     </script>
 </body>
 </html>
