@@ -123,12 +123,9 @@
                 <label class="block text-white font-semibold mb-2">Preview:</label>
                 <div class="bg-white/20 border border-white/30 rounded-lg p-4 relative">
                     <div id="previewContainer" class="w-full aspect-video relative">
-                        <!-- Video Preview -->
-                        <video id="previewVideo" class="w-full h-full rounded hidden" loop>
+                        <video id="previewVideo" class="w-full h-full rounded" loop>
                             <source src="" type="video/mp4">
                         </video>
-                        
-                        <!-- Audio Elements -->
                         <audio id="previewSound" class="hidden">
                             <source src="" type="audio/mpeg">
                         </audio>
@@ -137,22 +134,29 @@
                         </audio>
                     </div>
                     
-                    <!-- Controls - Moved outside the video container -->
+                    <!-- Controls -->
                     <div class="mt-4 bg-black/50 p-4 rounded-lg">
                         <div class="flex flex-wrap items-center gap-4">
-                            <button type="button" onclick="togglePreview()" 
-                                    class="text-white hover:text-softpink bg-periwinkle px-4 py-2 rounded">
-                                Play
+                            <button type="button" onclick="togglePreview()" id="previewButton"
+                                    class="bg-periwinkle hover:bg-periwinkle/80 text-white font-semibold py-2 px-6 rounded-lg transition-colors flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" id="previewPlayIcon" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" id="previewPauseIcon" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span id="previewButtonText">Play</span>
                             </button>
                             <!-- Volume Controls -->
                             <div class="flex items-center gap-2">
                                 <label class="text-white text-sm whitespace-nowrap">Sound:</label>
-                                <input type="range" id="soundVolume" min="0" max="100" value="50" 
+                                <input type="range" id="previewSoundVolume" min="0" max="100" value="50" 
                                        class="w-24" oninput="updateVolume('previewSound', this.value)">
                             </div>
                             <div class="flex items-center gap-2">
                                 <label class="text-white text-sm whitespace-nowrap">Dialogue:</label>
-                                <input type="range" id="dialogueVolume" min="0" max="100" value="50" 
+                                <input type="range" id="previewDialogueVolume" min="0" max="100" value="50" 
                                        class="w-24" oninput="updateVolume('previewDialogue', this.value)">
                             </div>
                         </div>
@@ -224,33 +228,46 @@
     const previewVideo = document.getElementById('previewVideo');
     const previewSound = document.getElementById('previewSound');
     const previewDialogue = document.getElementById('previewDialogue');
+    const previewPlayIcon = document.getElementById('previewPlayIcon');
+    const previewPauseIcon = document.getElementById('previewPauseIcon');
+    const previewButtonText = document.getElementById('previewButtonText');
     let isPlaying = false;
 
-    // Update preview when components are selected
     function updatePreview() {
         const selectedAnimation = document.querySelector('input[name="animation"]:checked');
         const selectedSound = document.querySelector('input[name="sound"]:checked');
         const selectedDialogue = document.querySelector('input[name="dialogue"]:checked');
+
+        // Reset preview state and stop all media
+        previewVideo.pause();
+        previewSound.pause();
+        previewDialogue.pause();
+        isPlaying = false;
+        previewPlayIcon.classList.remove('hidden');
+        previewPauseIcon.classList.add('hidden');
+        previewButtonText.textContent = 'Play';
         
         if (selectedAnimation) {
             const videoElement = selectedAnimation.closest('div').querySelector('video');
             if (videoElement) {
                 previewVideo.src = videoElement.src;
-                previewVideo.classList.remove('hidden');
+                previewVideo.load();
             }
         }
         
         if (selectedSound) {
-            const audioElement = selectedSound.closest('div').querySelector('audio');
+            const audioElement = selectedSound.closest('div').querySelector('source');
             if (audioElement) {
-                previewSound.src = audioElement.src;
+                previewSound.querySelector('source').src = audioElement.src;
+                previewSound.load();
             }
         }
         
         if (selectedDialogue) {
-            const audioElement = selectedDialogue.closest('div').querySelector('audio');
+            const audioElement = selectedDialogue.closest('div').querySelector('source');
             if (audioElement) {
-                previewDialogue.src = audioElement.src;
+                previewDialogue.querySelector('source').src = audioElement.src;
+                previewDialogue.load();
             }
         }
     }
@@ -260,23 +277,40 @@
             previewVideo.pause();
             previewSound.pause();
             previewDialogue.pause();
-            isPlaying = false;
+            previewPlayIcon.classList.remove('hidden');
+            previewPauseIcon.classList.add('hidden');
+            previewButtonText.textContent = 'Play';
         } else {
-            previewVideo.play();
-            previewSound.play();
-            previewDialogue.play();
-            isPlaying = true;
+            Promise.all([
+                previewVideo.play(),
+                previewSound.play(),
+                previewDialogue.play()
+            ]).then(() => {
+                previewPlayIcon.classList.add('hidden');
+                previewPauseIcon.classList.remove('hidden');
+                previewButtonText.textContent = 'Pause';
+            }).catch(error => {
+                console.error('Error playing media:', error);
+            });
         }
-    }
-
-    function updateVolume(elementId, value) {
-        document.getElementById(elementId).volume = value / 100;
+        isPlaying = !isPlaying;
     }
 
     // Add event listeners to radio buttons
     document.querySelectorAll('input[type="radio"]').forEach(radio => {
         radio.addEventListener('change', updatePreview);
     });
+
+    // Initialize volume controls
+    function updateVolume(elementId, value) {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.volume = value / 100;
+        }
+    }
+
+    // Initialize preview when page loads
+    document.addEventListener('DOMContentLoaded', updatePreview);
     </script>
 </body>
 </html>
