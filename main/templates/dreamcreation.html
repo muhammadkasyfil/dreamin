@@ -72,7 +72,7 @@
                                 <span class="text-white">{{ animation.name }}</span>
                             </label>
                             {% if animation.file %}
-                            <video class="w-full mt-2 rounded cursor-pointer" src="{{ animation.file.url }}" onclick="openPreview(this.src, 'video')"></video>
+                            <video class="w-full mt-2 rounded cursor-pointer" src="{{ animation.get_file_url }}" onclick="openPreview(this.src, 'video')"></video>
                             {% endif %}
                         </div>
                         {% endfor %}
@@ -91,7 +91,7 @@
                             </label>
                             {% if sound.file %}
                             <audio controls class="w-full mt-2">
-                                <source src="{{ sound.file.url }}" type="audio/mpeg">
+                                <source src="{{ sound.get_file_url }}" type="audio/mpeg">
                             </audio>
                             {% endif %}
                         </div>
@@ -111,7 +111,7 @@
                             </label>
                             {% if dialogue.file %}
                             <audio controls class="w-full mt-2">
-                                <source src="{{ dialogue.file.url }}" type="audio/mpeg">
+                                <source src="{{ dialogue.get_file_url }}" type="audio/mpeg">
                             </audio>
                             {% endif %}
                         </div>

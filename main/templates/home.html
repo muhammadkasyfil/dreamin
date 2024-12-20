@@ -116,8 +116,8 @@
                             {% for animation in animations %}
                             <div class="bg-white/20 rounded-lg p-4">
                                 <p class="text-white mb-2">{{ animation.name }}</p>
-                                {% if animation.file %}
-                                <video class="w-full rounded cursor-pointer" src="{{ animation.file.url }}" 
+                                {% if animation.get_file_url %}
+                                <video class="w-full rounded cursor-pointer" src="{{ animation.get_file_url }}" 
                                        onclick="openPreview(this.src, 'video')" preload="metadata">
                                 </video>
                                 {% endif %}
@@ -133,9 +133,9 @@
                             {% for sound in sounds %}
                             <div class="bg-white/20 rounded-lg p-4">
                                 <p class="text-white">{{ sound.name }}</p>
-                                {% if sound.file %}
+                                {% if sound.get_file_url %}
                                 <audio controls class="w-full mt-2">
-                                    <source src="{{ sound.file.url }}" type="audio/mpeg">
+                                    <source src="{{ sound.get_file_url }}" type="audio/mpeg">
                                 </audio>
                                 {% else %}
                                 <p class="text-white/70">No audio file available</p>
@@ -152,9 +152,13 @@
                             {% for dialogue in dialogues %}
                             <div class="bg-white/20 rounded-lg p-4">
                                 <p class="text-white">{{ dialogue.name }}</p>
+                                {% if dialogue.get_file_url %}
                                 <audio controls class="w-full mt-2">
-                                    <source src="{{ dialogue.file.url }}" type="audio/mpeg">
+                                    <source src="{{ dialogue.get_file_url }}" type="audio/mpeg">
                                 </audio>
+                                {% else %}
+                                <p class="text-white/70">No audio file available</p>
+                                {% endif %}
                             </div>
                             {% endfor %}
                         </div>

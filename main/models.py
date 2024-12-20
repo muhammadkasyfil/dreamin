@@ -4,6 +4,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.conf import settings
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -39,6 +40,11 @@ class DreamAnimation(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def get_file_url(self):
+        if settings.DEBUG:
+            return self.file.url if self.file else ''
+        return f"{settings.MEDIA_URL}{self.file.name}" if self.file else ''
+
     def __str__(self):
         return self.name
 
@@ -47,6 +53,11 @@ class DreamSound(models.Model):
     file = models.FileField(upload_to='sounds/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def get_file_url(self):
+        if settings.DEBUG:
+            return self.file.url if self.file else ''
+        return f"{settings.MEDIA_URL}{self.file.name}" if self.file else ''
+
     def __str__(self):
         return self.name
 
@@ -54,6 +65,11 @@ class Dialogue(models.Model):
     name = models.CharField(max_length=100)
     file = models.FileField(upload_to='dialogues/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def get_file_url(self):
+        if settings.DEBUG:
+            return self.file.url if self.file else ''
+        return f"{settings.MEDIA_URL}{self.file.name}" if self.file else ''
 
     def __str__(self):
         return self.name
