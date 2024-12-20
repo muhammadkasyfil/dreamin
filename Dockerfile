@@ -5,10 +5,15 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
+# Create static directory first
+RUN mkdir -p staticfiles
+
+# Copy the project files
 COPY . .
 
-# Create necessary directories
-RUN mkdir -p staticfiles media/animations media/sounds media/dialogues
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV DJANGO_SETTINGS_MODULE=dreamin.settings
 
 # Collect static files
 RUN python manage.py collectstatic --noinput
