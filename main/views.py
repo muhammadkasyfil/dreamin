@@ -18,30 +18,36 @@ def index(request):
 def home_view(request):
     search_query = request.GET.get('search', '')
     
-    user_dreams = Dream.objects.filter(user=request.user).order_by('-created_at')
-    all_dreams = Dream.objects.all().order_by('-created_at')
-    animations = DreamAnimation.objects.all()
-    sounds = DreamSound.objects.all()
-    dialogues = Dialogue.objects.all()
-    
-    if search_query:
-        user_dreams = user_dreams.filter(title__icontains=search_query)
-        all_dreams = all_dreams.filter(title__icontains=search_query)
-        animations = animations.filter(name__icontains=search_query)
-        sounds = sounds.filter(name__icontains=search_query)
-        dialogues = dialogues.filter(name__icontains=search_query)
-    else:
-        # Only randomize if not searching
-        animations = animations.order_by('?')
-        sounds = sounds.order_by('?')
-        dialogues = dialogues.order_by('?')
+    try:
+        user_dreams = Dream.objects.filter(user=request.user).order_by('-created_at')
+        all_dreams = Dream.objects.all().order_by('-created_at')
+        animations = DreamAnimation.objects.filter(file__isnull=False)
+        sounds = DreamSound.objects.filter(file__isnull=False)
+        dialogues = Dialogue.objects.filter(file__isnull=False)
+        
+        if search_query:
+            user_dreams = user_dreams.filter(title__icontains=search_query)
+            all_dreams = all_dreams.filter(title__icontains=search_query)
+            animations = animations.filter(name__icontains=search_query)
+            sounds = sounds.filter(name__icontains=search_query)
+            dialogues = dialogues.filter(name__icontains=search_query)
+        else:
+            animations = animations.order_by('?')
+            sounds = sounds.order_by('?')
+            dialogues = dialogues.order_by('?')
+    except Exception as e:
+        user_dreams = []
+        all_dreams = []
+        animations = []
+        sounds = []
+        dialogues = []
     
     context = {
         'user_dreams': user_dreams,
         'all_dreams': all_dreams,
-        'animations': animations[:3],
-        'sounds': sounds[:3],
-        'dialogues': dialogues[:3],
+        'animations': animations[:3] if animations else [],
+        'sounds': sounds[:3] if sounds else [],
+        'dialogues': dialogues[:3] if dialogues else [],
         'latest_dream': Dream.objects.filter(user=request.user).order_by('-created_at').first(),
         'search_query': search_query,
     }
