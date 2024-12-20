@@ -78,8 +78,10 @@ WSGI_APPLICATION = 'dreamin.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgresql://postgres:postgres@localhost:5432/postgres',
-        conn_max_age=600
+        default='postgresql://user:password@localhost:5432/database',
+        conn_max_age=600,
+        conn_health_checks=True,
+        ssl_require=True
     )
 }
 
