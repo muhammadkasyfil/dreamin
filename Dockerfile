@@ -7,6 +7,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
+ENV PORT=8000
+
 RUN python manage.py collectstatic --noinput
 
-CMD ["gunicorn", "dreamin.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD gunicorn dreamin.wsgi:application --bind 0.0.0.0:$PORT
