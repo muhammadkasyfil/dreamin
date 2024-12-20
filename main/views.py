@@ -1,11 +1,14 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from django import forms
 from django.contrib.auth.decorators import login_required
-from .models import Dream, DreamAnimation, DreamSound, Dialogue, Reflection
+from .models import Dream, DreamAnimation, DreamSound, Dialogue, Reflection, Profile
 from django.contrib.auth.views import LogoutView
+from django.utils import timezone
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import Http404
 
 # Landing Page View
 def index(request):
@@ -104,43 +107,81 @@ def signup(request):
 
 # Login View
 def login_view(request):
-    if request.method == "POST":
-        username = request.POST.get("username")
-        password = request.POST.get("password")
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            messages.success(request, f"Welcome back, {username}!")
-            return redirect('home')
-        else:
-            messages.error(request, "Invalid username or password.")
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        if not username or not password:
+            messages.error(request, "Please enter both username and password.")
+            return render(request, "index.html")
+            
+        try:
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                profile, created = Profile.objects.get_or_create(user=user)
+                profile.last_session_key = request.session.session_key
+                profile.session_start = timezone.now()
+                profile.session_expiry = timezone.now() + timezone.timedelta(days=1)
+                profile.login_count += 1
+                profile.save()
+                return redirect('home')
+            else:
+                messages.error(request, "Invalid username or password.")
+        except Exception as e:
+            messages.error(request, "An error occurred. Please try again.")
+            
     return render(request, "index.html")
 
 @login_required
 def create_dream_view(request):
     if request.method == 'POST':
-        dream = Dream.objects.create(
-            user=request.user,
-            title=request.POST.get('title'),
-            description=request.POST.get('description')
-        )
+        title = request.POST.get('title')
+        description = request.POST.get('description')
         
-        # Handle single animation
-        animation_id = request.POST.get('animation')
-        if animation_id:
-            dream.animations.add(DreamAnimation.objects.get(id=animation_id))
-        
-        # Handle single sound
-        sound_id = request.POST.get('sound')
-        if sound_id:
-            dream.sounds.add(DreamSound.objects.get(id=sound_id))
-        
-        # Handle single dialogue
-        dialogue_id = request.POST.get('dialogue')
-        if dialogue_id:
-            dream.dialogues.add(Dialogue.objects.get(id=dialogue_id))
-        
-        return redirect('home')
+        if not title:
+            messages.error(request, "Title is required.")
+            return redirect('create_dream')
+            
+        try:
+            dream = Dream.objects.create(
+                user=request.user,
+                title=title,
+                description=description
+            )
+            
+            # Handle single animation
+            animation_id = request.POST.get('animation')
+            if animation_id:
+                try:
+                    animation = DreamAnimation.objects.get(id=animation_id)
+                    dream.animations.add(animation)
+                except ObjectDoesNotExist:
+                    messages.warning(request, "Selected animation not found.")
+            
+            # Similar try-except blocks for sound and dialogue
+            sound_id = request.POST.get('sound')
+            if sound_id:
+                try:
+                    sound = DreamSound.objects.get(id=sound_id)
+                    dream.sounds.add(sound)
+                except ObjectDoesNotExist:
+                    messages.warning(request, "Selected sound not found.")
+                    
+            dialogue_id = request.POST.get('dialogue')
+            if dialogue_id:
+                try:
+                    dialogue = Dialogue.objects.get(id=dialogue_id)
+                    dream.dialogues.add(dialogue)
+                except ObjectDoesNotExist:
+                    messages.warning(request, "Selected dialogue not found.")
+            
+            messages.success(request, "Dream created successfully!")
+            return redirect('home')
+            
+        except Exception as e:
+            messages.error(request, "An error occurred while creating your dream.")
+            return redirect('create_dream')
     
     context = {
         'animations': DreamAnimation.objects.all(),
@@ -177,14 +218,18 @@ def dreamjournal_view(request):
 
 @login_required
 def dreamplayback_view(request, dream_id):
-    dream = Dream.objects.get(id=dream_id, user=request.user)
-    context = {
-        'dream': dream,
-        'animation': dream.animations.first(),
-        'sound': dream.sounds.first(),
-        'dialogue': dream.dialogues.first(),
-    }
-    return render(request, 'dreamplayback.html', context)
+    try:
+        dream = get_object_or_404(Dream, id=dream_id, user=request.user)
+        context = {
+            'dream': dream,
+            'animation': dream.animations.first(),
+            'sound': dream.sounds.first(),
+            'dialogue': dream.dialogues.first(),
+        }
+        return render(request, 'dreamplayback.html', context)
+    except Http404:
+        messages.error(request, "Dream not found.")
+        return redirect('home')
 
 @login_required
 def dream_detail(request, dream_id):

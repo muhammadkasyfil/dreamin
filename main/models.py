@@ -1,18 +1,40 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django import forms
+from django.core.exceptions import ValidationError
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(max_length=500, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    last_session_key = models.CharField(max_length=100, blank=True, null=True)
+    session_start = models.DateTimeField(null=True, blank=True)
+    session_expiry = models.DateTimeField(null=True, blank=True)
+    login_count = models.IntegerField(default=0)
     
     def __str__(self):
         return f"{self.user.username}'s profile"
 
+def validate_file_size(value):
+    filesize = value.size
+    if filesize > 10 * 1024 * 1024:  # 10MB limit
+        raise ValidationError("The maximum file size that can be uploaded is 10MB")
+
+def validate_file_extension(value):
+    import os
+    ext = os.path.splitext(value.name)[1]
+    valid_extensions = ['.mp4', '.mp3', '.wav', '.ogg']
+    if ext.lower() not in valid_extensions:
+        raise ValidationError('Unsupported file extension.')
+
 class DreamAnimation(models.Model):
     name = models.CharField(max_length=100)
-    file = models.FileField(upload_to='animations/', null=True, blank=True)
+    file = models.FileField(
+        upload_to='animations/',
+        validators=[validate_file_size, validate_file_extension],
+        null=True,
+        blank=True
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -79,6 +101,12 @@ class SignupForm(forms.Form):
         cleaned_data = super().clean()
         password1 = cleaned_data.get('password1')
         password2 = cleaned_data.get('password2')
+        
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError("Passwords don't match")
+        
+        username = cleaned_data.get('username')
+        if username and User.objects.filter(username=username).exists():
+            raise forms.ValidationError("Username already exists")
+            
         return cleaned_data
