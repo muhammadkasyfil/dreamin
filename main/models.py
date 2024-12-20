@@ -1,3 +1,4 @@
+import os
 from django.db import models
 from django.contrib.auth.models import User
 from django import forms
@@ -7,6 +8,12 @@ from django.dispatch import receiver
 from django.conf import settings
 from django.conf import settings
 from storages.backends.s3boto3 import S3Boto3Storage
+
+# Create media directories
+os.makedirs(settings.MEDIA_ROOT, exist_ok=True)
+os.makedirs(os.path.join(settings.MEDIA_ROOT, 'animations'), exist_ok=True)
+os.makedirs(os.path.join(settings.MEDIA_ROOT, 'sounds'), exist_ok=True)
+os.makedirs(os.path.join(settings.MEDIA_ROOT, 'dialogues'), exist_ok=True)
 
 storage = S3Boto3Storage() if not settings.DEBUG else None
 
@@ -38,7 +45,6 @@ class DreamAnimation(models.Model):
     name = models.CharField(max_length=100)
     file = models.FileField(
         upload_to='animations/',
-        storage=storage,
         validators=[validate_file_size, validate_file_extension],
         null=True,
         blank=True
@@ -57,7 +63,6 @@ class DreamSound(models.Model):
     name = models.CharField(max_length=100)
     file = models.FileField(
         upload_to='sounds/',
-        storage=storage,
         null=True,
         blank=True
     )
@@ -73,7 +78,7 @@ class DreamSound(models.Model):
 
 class Dialogue(models.Model):
     name = models.CharField(max_length=100)
-    file = models.FileField(upload_to='dialogues/', storage=storage, null=True, blank=True)
+    file = models.FileField(upload_to='dialogues/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def get_file_url(self):
