@@ -60,47 +60,68 @@
 
     <main class="container mx-auto px-4 py-8">
         <div class="max-w-3xl mx-auto bg-lavender/70 rounded-2xl p-6 shadow-lg backdrop-blur-sm">
-            <div class="bg-white/20 border border-white/30 rounded-lg p-4 mb-4 aspect-video">
-                <video id="dreamVideo" class="w-full h-full rounded" loop>
+            <div class="bg-white/20 border border-white/30 rounded-lg p-4 mb-4 aspect-video relative">
+                <video id="dreamVideo" class="w-full h-full rounded cursor-pointer" loop>
                     <source src="{{ animation.file.url }}" type="video/mp4">
                 </video>
+                <button onclick="toggleFullscreen()" 
+                        class="absolute bottom-4 right-4 bg-black/50 p-2 rounded text-white hover:bg-black/70">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"/>
+                    </svg>
+                </button>
             </div>
             
             <div class="space-y-6">
                 <div class="w-full">
                     <input type="range" id="timeline" class="w-full" value="0" min="0" max="100">
+                    <div class="flex justify-between text-white/80 text-sm mt-1">
+                        <span id="currentTime">0:00</span>
+                        <span id="duration">0:00</span>
+                    </div>
                 </div>
                 
                 <div class="flex justify-center space-x-4">
                     <button onclick="togglePlay()" id="playButton" 
-                            class="bg-periwinkle hover:bg-periwinkle/80 text-white font-semibold py-2 px-6 rounded-lg transition-colors">
-                        Play
+                            class="bg-periwinkle hover:bg-periwinkle/80 text-white font-semibold py-2 px-6 rounded-lg transition-colors flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" id="playIcon" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" id="pauseIcon" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span id="buttonText">Play</span>
                     </button>
                 </div>
 
-                <div class="grid grid-cols-3 gap-4">
+                <div class="grid grid-cols-2 gap-4">
                     <div class="bg-white/20 p-4 rounded-lg">
-                        <label class="block text-white text-sm mb-2">Animation Volume</label>
-                        <input type="range" id="videoVolume" class="w-full" value="100" min="0" max="100"
-                               oninput="updateVolume('dreamVideo', this.value)">
+                        <h3 class="text-white font-semibold mb-2">Sound</h3>
+                        <div class="space-y-4">
+                            <audio controls id="dreamSound" class="w-full" loop>
+                                <source src="{{ sound.file.url }}" type="audio/mpeg">
+                            </audio>
+                            <div class="flex items-center gap-2">
+                                <label class="text-white text-sm whitespace-nowrap">Volume:</label>
+                                <input type="range" id="soundVolume" min="0" max="100" value="50" 
+                                       class="w-24" oninput="updateVolume('dreamSound', this.value)">
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="bg-white/20 p-4 rounded-lg">
-                        <label class="block text-white text-sm mb-2">Sound Volume</label>
-                        <input type="range" id="soundVolume" class="w-full" value="100" min="0" max="100"
-                               oninput="updateVolume('dreamSound', this.value)">
-                        <audio id="dreamSound" loop>
-                            <source src="{{ sound.file.url }}" type="audio/mpeg">
-                        </audio>
-                    </div>
-                    
-                    <div class="bg-white/20 p-4 rounded-lg">
-                        <label class="block text-white text-sm mb-2">Dialogue Volume</label>
-                        <input type="range" id="dialogueVolume" class="w-full" value="100" min="0" max="100"
-                               oninput="updateVolume('dreamDialogue', this.value)">
-                        <audio id="dreamDialogue" loop>
-                            <source src="{{ dialogue.file.url }}" type="audio/mpeg">
-                        </audio>
+                        <h3 class="text-white font-semibold mb-2">Dialogue</h3>
+                        <div class="space-y-4">
+                            <audio controls id="dreamDialogue" class="w-full" loop>
+                                <source src="{{ dialogue.file.url }}" type="audio/mpeg">
+                            </audio>
+                            <div class="flex items-center gap-2">
+                                <label class="text-white text-sm whitespace-nowrap">Volume:</label>
+                                <input type="range" id="dialogueVolume" min="0" max="100" value="50" 
+                                       class="w-24" oninput="updateVolume('dreamDialogue', this.value)">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -113,19 +134,40 @@
         const dialogue = document.getElementById('dreamDialogue');
         const timeline = document.getElementById('timeline');
         const playButton = document.getElementById('playButton');
+        const currentTimeDisplay = document.getElementById('currentTime');
+        const durationDisplay = document.getElementById('duration');
         let isPlaying = false;
+
+        const soundTimestamp = document.getElementById('soundTimestamp');
+        const dialogueTimestamp = document.getElementById('dialogueTimestamp');
+        const soundTimestampValue = document.getElementById('soundTimestampValue');
+        const dialogueTimestampValue = document.getElementById('dialogueTimestampValue');
+
+        const playIcon = document.getElementById('playIcon');
+        const pauseIcon = document.getElementById('pauseIcon');
+        const buttonText = document.getElementById('buttonText');
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            seconds = Math.floor(seconds % 60);
+            return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
 
         function togglePlay() {
             if (isPlaying) {
                 video.pause();
                 sound.pause();
                 dialogue.pause();
-                playButton.textContent = 'Play';
+                playIcon.classList.remove('hidden');
+                pauseIcon.classList.add('hidden');
+                buttonText.textContent = 'Play';
             } else {
                 video.play();
                 sound.play();
                 dialogue.play();
-                playButton.textContent = 'Pause';
+                playIcon.classList.add('hidden');
+                pauseIcon.classList.remove('hidden');
+                buttonText.textContent = 'Pause';
             }
             isPlaying = !isPlaying;
         }
@@ -134,9 +176,47 @@
             document.getElementById(elementId).volume = value / 100;
         }
 
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                video.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        function updateAudioStart(elementId, timeString) {
+            const [minutes, seconds] = timeString.split(':').map(Number);
+            const timeInSeconds = minutes * 60 + seconds;
+            const audio = document.getElementById(elementId);
+            
+            if (isPlaying) {
+                audio.currentTime = timeInSeconds;
+            }
+        }
+
+        function updateTimestamp(elementId, value) {
+            const audio = document.getElementById(elementId);
+            const timestamp = (value / 100) * audio.duration;
+            
+            if (elementId === 'dreamSound') {
+                soundTimestampValue.textContent = formatTime(timestamp);
+            } else {
+                dialogueTimestampValue.textContent = formatTime(timestamp);
+            }
+            
+            if (isPlaying) {
+                audio.currentTime = timestamp;
+            }
+        }
+
+        video.addEventListener('loadedmetadata', () => {
+            durationDisplay.textContent = formatTime(video.duration);
+        });
+
         video.addEventListener('timeupdate', () => {
             const percentage = (video.currentTime / video.duration) * 100;
             timeline.value = percentage;
+            currentTimeDisplay.textContent = formatTime(video.currentTime);
         });
 
         timeline.addEventListener('input', () => {
@@ -144,6 +224,28 @@
             video.currentTime = time;
             sound.currentTime = time;
             dialogue.currentTime = time;
+        });
+
+        // Double click to toggle fullscreen
+        video.addEventListener('dblclick', toggleFullscreen);
+
+        // Initialize timestamp displays when audio files are loaded
+        sound.addEventListener('loadedmetadata', () => {
+            soundTimestampValue.textContent = '0:00';
+        });
+
+        dialogue.addEventListener('loadedmetadata', () => {
+            dialogueTimestampValue.textContent = '0:00';
+        });
+
+        // Add event listener for video end
+        video.addEventListener('ended', () => {
+            if (!video.loop) {
+                isPlaying = false;
+                playIcon.classList.remove('hidden');
+                pauseIcon.classList.add('hidden');
+                buttonText.textContent = 'Play';
+            }
         });
     </script>
 
