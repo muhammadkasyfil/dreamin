@@ -12,12 +12,6 @@ from django.http import Http404
 import os
 from django.conf import settings
 
-# Create media directories
-os.makedirs(settings.MEDIA_ROOT, exist_ok=True)
-os.makedirs(os.path.join(settings.MEDIA_ROOT, 'animations'), exist_ok=True)
-os.makedirs(os.path.join(settings.MEDIA_ROOT, 'sounds'), exist_ok=True)
-os.makedirs(os.path.join(settings.MEDIA_ROOT, 'dialogues'), exist_ok=True)
-
 # Landing Page View
 def index(request):
     return render(request, 'index.html', {})

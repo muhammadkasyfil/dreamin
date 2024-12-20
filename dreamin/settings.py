@@ -161,18 +161,21 @@ LOGOUT_REDIRECT_URL = '/login/'
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 # Media files (uploads)
-MEDIA_URL = '/media/'  # This will be overridden by Cloudinary in production
+MEDIA_URL = '/media/'  # This will be handled by Cloudinary
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Cloudinary settings
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
-    'SECURE': True
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME', 'dysfn8kdg'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY', '435326248528675'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET', 'ZlmokmXJXPveQ0VVxTodkaGxoJY'),
+    'SECURE': True,
+    'MEDIA_TAG': 'media',
+    'INVALID_VIDEO_ERROR_MESSAGE': 'Please upload a valid video file.',
+    'TIMEOUT': 60
 }
 
-# Use Cloudinary in both development and production
+# Always use Cloudinary for media
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Create subdirectories for different file types

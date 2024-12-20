@@ -35,4 +35,7 @@ urlpatterns = [
     path("dreamjournal/<int:dream_id>/reflection/", views.create_reflection, name="create_reflection"),
     path("dreamjournal/<int:dream_id>/", views.dream_detail, name="dream_detail"),
     path('dream-playback/<int:dream_id>/', views.dreamplayback_view, name='dream_playback'),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+
+# Add this for serving media files
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
