@@ -163,19 +163,27 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Cloudinary settings
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME', None),
-    'API_KEY': os.getenv('CLOUDINARY_API_KEY', None),
-    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET', None),
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
+    'SECURE': True,
+    'MEDIA_TAG': 'media',
+    'INVALID_VIDEO_ERROR_MESSAGE': 'Please upload a valid video file.',
+    'TIMEOUT': 60
 }
 
-if not all(CLOUDINARY_STORAGE.values()):
+# Check if we're in debug mode - don't raise error if credentials are missing
+if not all(CLOUDINARY_STORAGE.values()) and not DEBUG:
     raise ValueError(
         "Cloudinary credentials are missing. Please set CLOUDINARY_CLOUD_NAME, "
         "CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET environment variables."
     )
 
-# Always use Cloudinary for media
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+# Use different storage backends based on configuration
+if all(CLOUDINARY_STORAGE.values()):
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+else:
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 # Also add this for security
 CSRF_TRUSTED_ORIGINS = [
