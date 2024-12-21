@@ -165,9 +165,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Cloudinary settings
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME', 'dysfn8kdg'),
-    'API_KEY': os.getenv('CLOUDINARY_API_KEY', '435326248528675'),
-    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET', 'ZlmokmXJXPveQ0VVxTodkaGxoJY'),
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
     'SECURE': True,
     'MEDIA_TAG': 'media',
     'INVALID_VIDEO_ERROR_MESSAGE': 'Please upload a valid video file.',
