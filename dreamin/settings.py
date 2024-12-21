@@ -181,9 +181,6 @@ CSRF_TRUSTED_ORIGINS = [
     'https://*.railway.app'
 ]
 
-# Update Cloudinary settings
-CLOUDINARY_URL = f"cloudinary://{os.getenv('CLOUDINARY_API_KEY')}:{os.getenv('CLOUDINARY_API_SECRET')}@{os.getenv('CLOUDINARY_CLOUD_NAME')}"
-
 # Add these settings
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_AGE = 86400  # 24 hours in seconds

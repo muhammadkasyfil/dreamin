@@ -24,21 +24,35 @@ def home_view(request):
     try:
         user_dreams = Dream.objects.filter(user=request.user).order_by('-created_at')
         all_dreams = Dream.objects.all().order_by('-created_at')
-        animations = DreamAnimation.objects.filter(file__isnull=False)
-        sounds = DreamSound.objects.filter(file__isnull=False)
-        dialogues = Dialogue.objects.filter(file__isnull=False)
         
-        if search_query:
-            user_dreams = user_dreams.filter(title__icontains=search_query)
-            all_dreams = all_dreams.filter(title__icontains=search_query)
-            animations = animations.filter(name__icontains=search_query)
-            sounds = sounds.filter(name__icontains=search_query)
-            dialogues = dialogues.filter(name__icontains=search_query)
+        # Check if Cloudinary is properly configured
+        if settings.CLOUDINARY_STORAGE.get('CLOUD_NAME'):
+            animations = DreamAnimation.objects.filter(file__isnull=False)
+            sounds = DreamSound.objects.filter(file__isnull=False)
+            dialogues = Dialogue.objects.filter(file__isnull=False)
+            
+            if search_query:
+                user_dreams = user_dreams.filter(title__icontains=search_query)
+                all_dreams = all_dreams.filter(title__icontains=search_query)
+                animations = animations.filter(name__icontains=search_query)
+                sounds = sounds.filter(name__icontains=search_query)
+                dialogues = dialogues.filter(name__icontains=search_query)
+            else:
+                animations = animations.order_by('?')
+                sounds = sounds.order_by('?')
+                dialogues = dialogues.order_by('?')
         else:
-            animations = animations.order_by('?')
-            sounds = sounds.order_by('?')
-            dialogues = dialogues.order_by('?')
+            messages.warning(request, "Media features are temporarily unavailable.")
+            animations = []
+            sounds = []
+            dialogues = []
+            
+            if search_query:
+                user_dreams = user_dreams.filter(title__icontains=search_query)
+                all_dreams = all_dreams.filter(title__icontains=search_query)
+                
     except Exception as e:
+        messages.error(request, f"An error occurred: {str(e)}")
         user_dreams = []
         all_dreams = []
         animations = []
@@ -54,6 +68,7 @@ def home_view(request):
         'latest_dream': Dream.objects.filter(user=request.user).order_by('-created_at').first(),
         'search_query': search_query,
     }
+    
     return render(request, "home.html", context)
 
 # Signup View
