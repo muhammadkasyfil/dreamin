@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', 'your-dev-secret-key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
 ALLOWED_HOSTS = [
     'dreamin-web-production.up.railway.app',  # Your Railway domain
@@ -195,4 +195,12 @@ CSRF_TRUSTED_ORIGINS = [
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_AGE = 86400  # 24 hours in seconds
 SESSION_SAVE_EVERY_REQUEST = True
+
+print("Cloudinary Settings:")
+print(f"CLOUD_NAME: {os.getenv('CLOUDINARY_CLOUD_NAME')}")
+print(f"API_KEY: {os.getenv('CLOUDINARY_API_KEY')}")
+print(f"API_SECRET: {os.getenv('CLOUDINARY_API_SECRET')}")
+print(f"All values present: {all(CLOUDINARY_STORAGE.values())}")
+
+print(f"Using storage backend: {DEFAULT_FILE_STORAGE}")
 
