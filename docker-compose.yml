@@ -14,7 +14,7 @@ services:
       - DEBUG=True
       - DJANGO_SETTINGS_MODULE=dreamin.settings
       - PYTHONUNBUFFERED=1
-      - SECRET_KEY=m2m--(t$+s*=x3bkkncp^wo523pad%1rp-7t51q#s$-pm34^%a
+      - SECRET_KEY=m2m--t$+s*=x3bkkncp^wo523pad%1rp-7t51q
       - CLOUDINARY_CLOUD_NAME=dysfn8kdg
       - CLOUDINARY_API_KEY=435326248528675
       - CLOUDINARY_API_SECRET=ZlmokmXJXPveQ0VVxTodkaGxoJY
