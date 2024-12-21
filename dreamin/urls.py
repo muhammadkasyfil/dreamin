@@ -31,10 +31,9 @@ urlpatterns = [
     path("home/", views.home_view, name="home"),
     path("create-dream/", views.create_dream_view, name="create_dream"),
     path("dreamjournal/", views.dreamjournal_view, name="dreamjournal"),
-    path("dreamplayback/", views.dreamplayback_view, name="dreamplayback"),
+    path("dream-playback/<int:dream_id>/", views.dreamplayback_view, name="dream_playback"),
     path("dreamjournal/<int:dream_id>/reflection/", views.create_reflection, name="create_reflection"),
     path("dreamjournal/<int:dream_id>/", views.dream_detail, name="dream_detail"),
-    path('dream-playback/<int:dream_id>/', views.dreamplayback_view, name='dream_playback'),
 ]
 
 if not settings.DEBUG:
