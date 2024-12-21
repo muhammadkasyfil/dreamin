@@ -43,7 +43,7 @@ class DreamAnimation(models.Model):
 
     def get_file_url(self):
         if self.file:
-            return self.file.url
+            return self.file.url if hasattr(self.file, 'url') else ''
         return ''
 
     def __str__(self):
@@ -60,7 +60,7 @@ class DreamSound(models.Model):
 
     def get_file_url(self):
         if self.file:
-            return self.file.url
+            return self.file.url if hasattr(self.file, 'url') else ''
         return ''
 
     def __str__(self):
@@ -73,7 +73,7 @@ class Dialogue(models.Model):
 
     def get_file_url(self):
         if self.file:
-            return self.file.url
+            return self.file.url if hasattr(self.file, 'url') else ''
         return ''
 
     def __str__(self):

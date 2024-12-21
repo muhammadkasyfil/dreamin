@@ -137,11 +137,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
-    os.path.join(BASE_DIR, 'dreamin/static'),
 ]
 
 # Whitenoise configuration
@@ -160,7 +159,7 @@ LOGOUT_REDIRECT_URL = '/login/'
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 # Media files (uploads)
-MEDIA_URL = '/media/'  # This will be handled by Cloudinary
+MEDIA_URL = '/'  # Change this from '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Cloudinary settings
@@ -182,4 +181,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://dreamin-web-production.up.railway.app',
     'https://*.railway.app'
 ]
+
+# Update Cloudinary settings
+CLOUDINARY_URL = f"cloudinary://{os.getenv('CLOUDINARY_API_KEY')}:{os.getenv('CLOUDINARY_API_SECRET')}@{os.getenv('CLOUDINARY_CLOUD_NAME')}"
 
