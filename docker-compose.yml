@@ -8,7 +8,7 @@ services:
       - "8000:8000"
     environment:
       - DATABASE_URL=postgresql://dreamin_owner:yVRMfOpx1H3L@ep-floral-violet-a1ak1di7.ap-southeast-1.aws.neon.tech/dreamin?sslmode=require
-      - DEBUG=False
+      - DEBUG=True
       - SECRET_KEY=your-secret-key-here
       - CLOUDINARY_CLOUD_NAME=dysfn8kdg
       - CLOUDINARY_API_KEY=435326248528675
