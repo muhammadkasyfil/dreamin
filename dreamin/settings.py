@@ -162,27 +162,31 @@ MEDIA_URL = '/media/'  # Change back to /media/
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Cloudinary settings
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
+cloudinary_settings = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),  # Use environ.get instead of getenv
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
     'SECURE': True,
     'MEDIA_TAG': 'media',
     'INVALID_VIDEO_ERROR_MESSAGE': 'Please upload a valid video file.',
     'TIMEOUT': 60
 }
 
-# Check if we're in debug mode - don't raise error if credentials are missing
-if not all(CLOUDINARY_STORAGE.values()) and not DEBUG:
-    raise ValueError(
-        "Cloudinary credentials are missing. Please set CLOUDINARY_CLOUD_NAME, "
-        "CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET environment variables."
-    )
+print("Environment Variables:")
+print(f"CLOUDINARY_CLOUD_NAME: {os.environ.get('CLOUDINARY_CLOUD_NAME')}")
+print(f"CLOUDINARY_API_KEY: {os.environ.get('CLOUDINARY_API_KEY')}")
+print(f"CLOUDINARY_API_SECRET: {os.environ.get('CLOUDINARY_API_SECRET', 'SECRET_HIDDEN')}")
+
+CLOUDINARY_STORAGE = cloudinary_settings
 
 # Use different storage backends based on configuration
-if all(CLOUDINARY_STORAGE.values()):
+if all([CLOUDINARY_STORAGE.get('CLOUD_NAME'), 
+        CLOUDINARY_STORAGE.get('API_KEY'), 
+        CLOUDINARY_STORAGE.get('API_SECRET')]):
+    print("Using Cloudinary storage backend")
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 else:
+    print("Using local file storage backend")
     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 # Also add this for security
