@@ -163,14 +163,16 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Cloudinary settings
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
-    'SECURE': True,
-    'MEDIA_TAG': 'media',
-    'INVALID_VIDEO_ERROR_MESSAGE': 'Please upload a valid video file.',
-    'TIMEOUT': 60
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME', None),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY', None),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET', None),
 }
+
+if not all(CLOUDINARY_STORAGE.values()):
+    raise ValueError(
+        "Cloudinary credentials are missing. Please set CLOUDINARY_CLOUD_NAME, "
+        "CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET environment variables."
+    )
 
 # Always use Cloudinary for media
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
