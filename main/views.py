@@ -220,18 +220,16 @@ def dreamjournal_view(request):
 
 @login_required
 def dreamplayback_view(request, dream_id):
-    try:
-        dream = get_object_or_404(Dream, id=dream_id, user=request.user)
-        context = {
-            'dream': dream,
-            'animation': dream.animations.first(),
-            'sound': dream.sounds.first(),
-            'dialogue': dream.dialogues.first(),
-        }
-        return render(request, 'dreamplayback.html', context)
-    except Http404:
-        messages.error(request, "Dream not found.")
-        return redirect('home')
+    dream = get_object_or_404(Dream, id=dream_id)
+    animation = dream.animation if hasattr(dream, 'animation') else None
+    
+    context = {
+        'dream': dream,
+        'animation': animation,
+        'has_video': animation and animation.file and hasattr(animation.file, 'url')
+    }
+    
+    return render(request, 'dreamplayback.html', context)
 
 @login_required
 def dream_detail(request, dream_id):
