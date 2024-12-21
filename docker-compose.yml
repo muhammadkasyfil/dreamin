@@ -10,20 +10,9 @@ services:
       - DATABASE_URL=postgresql://dreamin_owner:yVRMfOpx1H3L@ep-floral-violet-a1ak1di7.ap-southeast-1.aws.neon.tech/dreamin?sslmode=require
       - DEBUG=False
       - SECRET_KEY=your-secret-key-here
-      - ALLOWED_HOSTS=.railway.app,localhost,127.0.0.1
       - CLOUDINARY_CLOUD_NAME=dysfn8kdg
       - CLOUDINARY_API_KEY=435326248528675
       - CLOUDINARY_API_SECRET=ZlmokmXJXPveQ0VVxTodkaGxoJY
-    depends_on:
-      - migration
-
-  migration:
-    build: .
-    command: python manage.py migrate
-    volumes:
-      - .:/app
-    environment:
-      - DATABASE_URL=postgresql://dreamin_owner:yVRMfOpx1H3L@ep-floral-violet-a1ak1di7.ap-southeast-1.aws.neon.tech/dreamin?sslmode=require
 
 volumes:
   static_volume:
