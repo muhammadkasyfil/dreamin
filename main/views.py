@@ -11,6 +11,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
 import os
 from django.conf import settings
+from .forms import SignupForm
 
 # Landing Page View
 def index(request):
@@ -54,34 +55,6 @@ def home_view(request):
         'search_query': search_query,
     }
     return render(request, "home.html", context)
-
-# Signup Form
-class SignupForm(forms.Form):
-    username = forms.CharField(max_length=150, widget=forms.TextInput(attrs={
-        'class': 'w-full bg-white/20 border border-white/30 text-white placeholder-white/70 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-softpink',
-        'placeholder': 'Enter your username'
-    }))
-    email = forms.EmailField(widget=forms.EmailInput(attrs={
-        'class': 'w-full bg-white/20 border border-white/30 text-white placeholder-white/70 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-softpink',
-        'placeholder': 'Enter your email'
-    }))
-    password1 = forms.CharField(widget=forms.PasswordInput(attrs={
-        'class': 'w-full bg-white/20 border border-white/30 text-white placeholder-white/70 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-softpink',
-        'placeholder': 'Enter your password'
-    }))
-    password2 = forms.CharField(widget=forms.PasswordInput(attrs={
-        'class': 'w-full bg-white/20 border border-white/30 text-white placeholder-white/70 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-softpink',
-        'placeholder': 'Confirm your password'
-    }))
-
-    def clean(self):
-        cleaned_data = super().clean()
-        password1 = cleaned_data.get('password1')
-        password2 = cleaned_data.get('password2')
-
-        if password1 and password2 and password1 != password2:
-            raise forms.ValidationError("Passwords don't match")
-        return cleaned_data
 
 # Signup View
 def signup(request):
@@ -128,12 +101,18 @@ def login_view(request):
             login(request, user)
             
             # Create or get profile after successful login
-            profile, created = Profile.objects.get_or_create(user=user)
-            profile.last_session_key = request.session.session_key
-            profile.session_start = timezone.now()
-            profile.session_expiry = timezone.now() + timezone.timedelta(days=1)
-            profile.login_count += 1
-            profile.save()
+            try:
+                profile = Profile.objects.get(user=user)
+            except Profile.DoesNotExist:
+                profile = Profile.objects.create(user=user)
+            
+            # Update profile after session is created
+            if request.session.session_key:
+                profile.last_session_key = request.session.session_key
+                profile.session_start = timezone.now()
+                profile.session_expiry = timezone.now() + timezone.timedelta(days=1)
+                profile.login_count += 1
+                profile.save()
             
             return redirect('home')
         else:
