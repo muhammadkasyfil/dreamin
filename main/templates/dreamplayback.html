@@ -102,28 +102,36 @@
                     <div class="bg-white/20 p-4 rounded-lg">
                         <h3 class="text-white font-semibold mb-2">Sound</h3>
                         <div class="space-y-4">
-                            <audio controls id="dreamSound" class="w-full" loop>
-                                <source src="{{ sound.file.url }}" type="audio/mpeg">
-                            </audio>
-                            <div class="flex items-center gap-2">
-                                <label class="text-white text-sm whitespace-nowrap">Volume:</label>
-                                <input type="range" id="soundVolume" min="0" max="100" value="50" 
-                                       class="w-24" oninput="updateVolume('dreamSound', this.value)">
-                            </div>
+                            {% if sound and sound.file %}
+                                <audio controls id="dreamSound" class="w-full" loop>
+                                    <source src="{{ sound.file.url }}" type="audio/mpeg">
+                                </audio>
+                                <div class="flex items-center gap-2">
+                                    <label class="text-white text-sm whitespace-nowrap">Volume:</label>
+                                    <input type="range" id="soundVolume" min="0" max="100" value="50" 
+                                           class="w-24" oninput="updateVolume('dreamSound', this.value)">
+                                </div>
+                            {% else %}
+                                <p class="text-gray-500">No sound available</p>
+                            {% endif %}
                         </div>
                     </div>
                     
                     <div class="bg-white/20 p-4 rounded-lg">
                         <h3 class="text-white font-semibold mb-2">Dialogue</h3>
                         <div class="space-y-4">
-                            <audio controls id="dreamDialogue" class="w-full" loop>
-                                <source src="{{ dialogue.file.url }}" type="audio/mpeg">
-                            </audio>
-                            <div class="flex items-center gap-2">
-                                <label class="text-white text-sm whitespace-nowrap">Volume:</label>
-                                <input type="range" id="dialogueVolume" min="0" max="100" value="50" 
-                                       class="w-24" oninput="updateVolume('dreamDialogue', this.value)">
-                            </div>
+                            {% if dialogue and dialogue.file %}
+                                <audio controls id="dreamDialogue" class="w-full" loop>
+                                    <source src="{{ dialogue.file.url }}" type="audio/mpeg">
+                                </audio>
+                                <div class="flex items-center gap-2">
+                                    <label class="text-white text-sm whitespace-nowrap">Volume:</label>
+                                    <input type="range" id="dialogueVolume" min="0" max="100" value="50" 
+                                           class="w-24" oninput="updateVolume('dreamDialogue', this.value)">
+                                </div>
+                            {% else %}
+                                <p class="text-gray-500">No dialogue available</p>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
