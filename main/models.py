@@ -114,26 +114,6 @@ class DreamSession(models.Model):
     def __str__(self):
         return f"Session for {self.dream.title if self.dream else 'Unknown Dream'}"
 
-class SignupForm(forms.Form):
-    username = forms.CharField(max_length=150)
-    email = forms.EmailField()
-    password1 = forms.CharField(widget=forms.PasswordInput)
-    password2 = forms.CharField(widget=forms.PasswordInput)
-
-    def clean(self):
-        cleaned_data = super().clean()
-        password1 = cleaned_data.get('password1')
-        password2 = cleaned_data.get('password2')
-        
-        if password1 and password2 and password1 != password2:
-            raise forms.ValidationError("Passwords don't match")
-        
-        username = cleaned_data.get('username')
-        if username and User.objects.filter(username=username).exists():
-            raise forms.ValidationError("Username already exists")
-            
-        return cleaned_data
-
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:

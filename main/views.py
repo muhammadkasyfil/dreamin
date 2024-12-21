@@ -123,21 +123,21 @@ def login_view(request):
             messages.error(request, "Please enter both username and password.")
             return render(request, "index.html")
             
-        try:
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                login(request, user)
-                profile, created = Profile.objects.get_or_create(user=user)
-                profile.last_session_key = request.session.session_key
-                profile.session_start = timezone.now()
-                profile.session_expiry = timezone.now() + timezone.timedelta(days=1)
-                profile.login_count += 1
-                profile.save()
-                return redirect('home')
-            else:
-                messages.error(request, "Invalid username or password.")
-        except Exception as e:
-            messages.error(request, "An error occurred. Please try again.")
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            login(request, user)
+            
+            # Create or get profile after successful login
+            profile, created = Profile.objects.get_or_create(user=user)
+            profile.last_session_key = request.session.session_key
+            profile.session_start = timezone.now()
+            profile.session_expiry = timezone.now() + timezone.timedelta(days=1)
+            profile.login_count += 1
+            profile.save()
+            
+            return redirect('home')
+        else:
+            messages.error(request, "Invalid username or password.")
             
     return render(request, "index.html")
 
