@@ -3,12 +3,17 @@ version: '3.8'
 services:
   web:
     build: .
-    command: gunicorn dreamin.wsgi:application --bind 0.0.0.0:8000
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             gunicorn dreamin.wsgi:application --bind 0.0.0.0:8000"
     ports:
       - "8000:8000"
     environment:
       - DATABASE_URL=postgresql://dreamin_owner:yVRMfOpx1H3L@ep-floral-violet-a1ak1di7.ap-southeast-1.aws.neon.tech/dreamin?sslmode=require
       - DEBUG=True
+      - DJANGO_SETTINGS_MODULE=dreamin.settings
+      - PYTHONUNBUFFERED=1
       - SECRET_KEY=your-secret-key-here
       - CLOUDINARY_CLOUD_NAME=dysfn8kdg
       - CLOUDINARY_API_KEY=435326248528675
