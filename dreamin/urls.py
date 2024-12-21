@@ -37,9 +37,6 @@ urlpatterns = [
     path('dream-playback/<int:dream_id>/', views.dreamplayback_view, name='dream_playback'),
 ]
 
-# Add this for development
-if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
-# Add this for serving media files
+# Add these lines for both development and production
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

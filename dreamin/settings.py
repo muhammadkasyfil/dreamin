@@ -159,7 +159,7 @@ LOGOUT_REDIRECT_URL = '/login/'
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 # Media files (uploads)
-MEDIA_URL = '/'  # Change this from '/media/'
+MEDIA_URL = '/media/'  # Change back to /media/
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Cloudinary settings
