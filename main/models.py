@@ -11,7 +11,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(max_length=500, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    last_session_key = models.CharField(max_length=100, blank=True, null=True)
+    last_session_key = models.CharField(max_length=40, null=True, blank=True)
     session_start = models.DateTimeField(null=True, blank=True)
     session_expiry = models.DateTimeField(null=True, blank=True)
     login_count = models.IntegerField(default=0)
